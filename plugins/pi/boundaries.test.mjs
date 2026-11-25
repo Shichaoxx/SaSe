@@ -12,13 +12,16 @@ import registerSaSe from './index.ts';
 const root = fileURLToPath(new URL('../../', import.meta.url));
 const user = { role: 'user', content: 'Read the records', timestamp: 1 };
 
-async function host(t) {
+async function host(t, evaluationPolicy) {
   const directory = await mkdtemp(join(tmpdir(), 'sase-boundaries-'));
   const db = join(directory, 'sase.sqlite3');
   const env = { SASE_DB: db, SASE_WORKSPACE: 'boundary-fixture', SASE_GOAL: 'all',
-    SASE_TIMEOUT_MS: '2000' };
+    SASE_TIMEOUT_MS: '2000', SASE_EVAL_POLICY: evaluationPolicy };
   const saved = Object.fromEntries(Object.keys(env).map(key => [key, process.env[key]]));
-  Object.assign(process.env, env);
+  for (const [key, value] of Object.entries(env)) {
+    if (value === undefined) delete process.env[key];
+    else process.env[key] = value;
+  }
   const ctx = { cwd: directory, model: { api: 'openai-completions' }, sessionManager: {
     getSessionId: () => 'boundary-session', getLeafId: () => 'original',
   } };
@@ -135,4 +138,53 @@ test('pagination observations belong to top-level tools and require an unambiguo
   assert.deepEqual(recalls(await pi.context()), []);
   const records = await pi.ledger();
   assert.deepEqual(records.map(d => d.state.has_next), ['unknown', true, 'unknown']);
+});
+
+test('fixed evaluation assigns the first successful page-one result once across retries', async t => {
+  const pi = await host(t, 'fixed');
+  await pi.prompt('sase.goal=first');
+  const result = page => ({ result: { details: { has_next: false, page } } });
+  await pi.page('failed', { ...result(1), isError: true });
+  await pi.advance();
+  assert.deepEqual(recalls(await pi.context()), []);
+  await pi.page('later-page', result(2));
+  await pi.advance();
+  assert.deepEqual(recalls(await pi.context()), []);
+  await pi.page('read-first', result(1));
+  await pi.advance();
+  const [injected] = recalls(await pi.context());
+  assert.ok(injected);
+  await pi.emit('turn_end', { outcome: 'error' });
+  assert.deepEqual(recalls(await pi.context()).map(m => m.content), [injected.content]);
+  await pi.page('read-first-again', result(1));
+  await pi.advance();
+  assert.deepEqual(recalls(await pi.context()), []);
+  const decisions = await pi.ledger();
+  assert.deepEqual(decisions.map(d => d.reason), [
+    'not_first_page', 'not_first_page', 'fixed_first_page', 'fixed_already_assigned',
+  ]);
+  assert.ok(decisions.every(d => d.policy_version === 'eval-fixed-first-page-v1'));
+});
+
+
+test('gated evaluation uses exactly the first eligible page-one opportunity, including skips', async t => {
+  const pi = await host(t, 'gated');
+  for (const [goal, more, expected] of [
+    ['all', true, 'continue_pagination'], ['first', true, 'first_page_only'], ['all', false, 'last_page'],
+  ]) {
+    await pi.prompt('sase.goal=' + goal);
+    for (const [toolId, page, hasNext, reason] of [
+      ['read-first', 1, more, expected], ['read-higher', 2, true, 'not_first_page'],
+      ['read-first-again', 1, true, 'opportunity_used'],
+    ]) {
+      await pi.page(toolId, { result: { details: { page, has_next: hasNext } } });
+      await pi.advance();
+      assert.equal(recalls(await pi.context()).length, Number(reason === 'continue_pagination'));
+    }
+  }
+  const decisions = await pi.ledger();
+  assert.ok(decisions.every(d => d.policy_version === 'eval-gated-first-page-v1'));
+  assert.deepEqual(decisions.map(d => d.reason), ['continue_pagination', 'first_page_only', 'last_page']
+    .flatMap(reason => [reason, 'not_first_page', 'opportunity_used']));
+  assert.deepEqual(decisions.map(d => d.eligibility), Array(3).fill([true, false, false]).flat());
 });

@@ -72,3 +72,5 @@ sequenceDiagram
 `inspect` 在至少有一条 `observed` 回执时将汇总曝光状态标为 `observed`，应结合回执位置解释。Pi 的 `context` 和 `request_payload` 使用同一上下文构建的 `attempt_id`。测试 provider 为每个实际 HTTP 尝试独立编号，一次上下文构建可能对应多个传输尝试。进入下一次逻辑模型调用时，适配器重新投影状态并获取新决定。
 
 分页策略记录 `randomized=false`、`propensity=null`。账本支持重放和描述性评估。估计技能的因果效用需要对照实验。适配器仅发送允许的目标枚举、页状态、标识及版本，工具原文、游标、认证头和完整请求载荷留在宿主侧。技能正文随显式导入保存在工作区技能库中。
+
+配对评估可以在 `decide` 中显式指定 `evaluation_policy` 为 `fixed` 或 `gated`。适配器额外提交 `kind=first_page` 布尔事实，并用相同的序号与工具调用 ID 关联分页反馈。评估账本中的 `eligibility` 表示是否具有本次干预机会；合格的 Gated 决策也可能选择跳过。每个运行只消费一次成功首页结果对应的机会。[评估协议](evaluation.md)

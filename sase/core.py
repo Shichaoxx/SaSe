@@ -16,6 +16,8 @@ CAPABILITIES = (
 SCOPE = ("workspace", "session", "run", "branch")
 UNKNOWN = "unknown"
 POLICY = "pagination-v1"
+FIXED_EVAL_POLICY = "eval-fixed-first-page-v1"
+GATED_EVAL_POLICY = "eval-gated-first-page-v1"
 MISSING_REASONS = {"unknown", "unavailable", "not_observed", "not_scored",
                    "not_applicable", "cancelled", "timeout", "missing"}
 
@@ -158,7 +160,7 @@ class Core:
             raise ValueError("expected normalized fact value")
         if value is None:
             value = UNKNOWN
-        if kind == "page" and (type(value) is bool or value == UNKNOWN):
+        if kind in ("page", "first_page") and (type(value) is bool or value == UNKNOWN):
             tool = identifier(req, "tool_call_id")
         elif kind != "goal" or value not in ("all", "first", UNKNOWN):
             raise ValueError("unsupported projected fact")
@@ -185,9 +187,11 @@ class Core:
                 AND seq=(SELECT MAX(seq) FROM events WHERE {where}) ORDER BY event_id""",
             params + params).fetchall()
 
-    def _project(self, stream, seq, tool):
+    def _project(self, stream, seq, tool, *, current_page_only=False):
         goals = self._latest(stream, "goal", seq)
         pages = self._latest(stream, "page", seq, tool)
+        if current_page_only:
+            pages = [row for row in pages if row["seq"] == seq]
         if pages and goals and pages[0]["seq"] < goals[0]["seq"]:
             pages = []
         goal_values = {json.loads(row["value"]) for row in goals}
@@ -212,6 +216,37 @@ class Core:
             return "last_page"
         return "continue_pagination" if skill else "no_approved_skill"
 
+    def _evaluation_reason(self, state, stream, caps, skill, policy):
+        # A successful, uniquely attributed page-one result defines this arm's
+        # exposure opportunity. Join position and feedback at the same call;
+        # never infer "first page" from the number of observed tool events.
+        state["evaluation_opportunity"] = False
+        seq = state["as_of_seq"]
+        position = self._latest(stream, "first_page", seq, state["tool_call_id"])
+        current = [row for row in position if row["seq"] == seq]
+        positions = {json.loads(row["value"]) for row in current}
+        first = positions.pop() if len(positions) == 1 else UNKNOWN
+        state["is_first_page"] = first
+        state["event_ids"].extend(row["event_id"] for row in current)
+        if not caps["observeTools"] or not caps["injectContext"]:
+            return "unsupported_capabilities"
+        if first is not True or type(state["has_next"]) is not bool:
+            return "not_first_page"
+        if not skill:
+            return "no_approved_skill"
+
+        # This lookup and allocation share the same write transaction. Once
+        # allocated, a missed callback cannot trigger a second assignment.
+        prior = self.db.execute("SELECT record FROM decisions WHERE stream=?", (stream,))
+        for row in prior:
+            record = json.loads(row["record"])
+            if record["policy_version"] == policy and record["eligibility"]:
+                return "fixed_already_assigned" if policy == FIXED_EVAL_POLICY else "opportunity_used"
+        state["evaluation_opportunity"] = True
+        if policy == FIXED_EVAL_POLICY:
+            return "fixed_first_page"
+        return self._reason(state, caps, skill)
+
     def _decide(self, req, workspace):
         scope = {key: identifier(req, key) for key in SCOPE}
         stream = encode(list(scope.values()))
@@ -232,19 +267,28 @@ class Core:
             raise ValueError("invalid capabilities")
         caps = {k: caps[k] for k in CAPABILITIES}
         tool = identifier(req, "tool_call_id") if "tool_call_id" in req else None
-        state = self._project(stream, seq, tool)
+        arm = req.get("evaluation_policy")
+        if arm not in (None, "gated", "fixed"):
+            raise ValueError("unknown evaluation policy")
+        state = self._project(stream, seq, tool, current_page_only=arm is not None)
         skill = self.db.execute("""SELECT s.* FROM active a JOIN skills s
             ON a.workspace=s.workspace AND a.version=s.version
             WHERE a.workspace=? AND a.name='paginate'""", (workspace,)).fetchone()
-        reason = self._reason(state, caps, skill)
-        inject = reason == "continue_pagination"
+        if arm is None:
+            reason = self._reason(state, caps, skill)
+            policy = POLICY
+        else:
+            policy = FIXED_EVAL_POLICY if arm == "fixed" else GATED_EVAL_POLICY
+            reason = self._evaluation_reason(state, stream, caps, skill, policy)
+        inject = reason in ("continue_pagination", "fixed_first_page")
         decision_id = uuid4().hex
         version = skill["version"] if skill else None
         record = {
             "v": 1, **scope, "call_id": call, "episode_id": episode, "decision_id": decision_id,
-            "state": state, "host": host, "capabilities": caps, "eligibility": inject,
+            "state": state, "host": host, "capabilities": caps,
+            "eligibility": state.get("evaluation_opportunity", inject),
             "assignment": "inject" if inject else "skip", "reason": reason,
-            "randomized": False, "propensity": None, "policy_version": POLICY,
+            "randomized": False, "propensity": None, "policy_version": policy,
             "skill_version": version, "content_hash": skill["hash"] if skill else None,
             "patch": f"[SaSe {decision_id} {version}]\n{skill['body']}" if inject else None,
             "exposure_status": UNKNOWN if inject else "not_applicable",

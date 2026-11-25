@@ -31,7 +31,7 @@ class CoreTests(unittest.TestCase):
 
     def fact(self, kind, value, seq, **kw):
         data = {"event_id": f"{kind}-{seq}", "seq": seq, "kind": kind, "value": value}
-        if kind == "page":
+        if kind in ("page", "first_page"):
             data["tool_call_id"] = f"tool-{seq}"
         return self.handle("event", **(data | kw))
 
@@ -61,6 +61,46 @@ class CoreTests(unittest.TestCase):
                     self.assertIn(result["decision_id"], result["patch"])
                 else:
                     self.assertIsNone(result["patch"])
+
+    def test_fixed_arm_is_independent_of_goal_and_continuation(self):
+        version = self.seed()
+        for run, goal, more in [("more", "all", True), ("last", "all", False),
+                                ("first", "first", True)]:
+            with self.subTest(run=run):
+                self.fact("goal", goal, 1, run=run)
+                self.fact("page", more, 2, run=run)
+                self.fact("first_page", True, 2, run=run)
+                params = dict(as_of_seq=2, run=run, evaluation_policy="fixed")
+                result = self.decide(**params)
+                self.assertEqual(result["assignment"], "inject")
+                self.assertEqual(result["reason"], "fixed_first_page")
+                self.assertTrue(result["eligibility"])
+                self.assertEqual(result["policy_version"], "eval-fixed-first-page-v1")
+                self.assertEqual(result["skill_version"], version)
+                self.assertEqual(result["state"]["event_ids"], ["goal-1", "page-2", "first_page-2"])
+                self.assertEqual(result["exposure_status"], "unknown")
+                self.assertEqual(self.decide(**params), result)
+                self.assertEqual(self.decide("other-call", **params)["reason"], "fixed_already_assigned")
+
+    def test_fixed_arm_requires_matched_current_facts_and_approved_skill(self):
+        def fixed(call, seq, **kw):
+            return self.decide(call, as_of_seq=seq, evaluation_policy="fixed", **kw)
+
+        self.fact("goal", "all", 1)
+        self.fact("page", True, 2, tool_call_id="read")
+        self.fact("first_page", True, 2, tool_call_id="other")
+        self.assertEqual(fixed("wrong-tool", 2)["reason"], "not_first_page")
+        self.fact("first_page", True, 3, tool_call_id="read")
+        self.assertEqual(fixed("stale-feedback", 3)["reason"], "not_first_page")
+        self.fact("page", True, 4, tool_call_id="read")
+        self.assertEqual(fixed("stale-position", 4)["reason"], "not_first_page")
+        self.fact("first_page", True, 4, tool_call_id="read")
+        self.assertEqual(fixed("unapproved", 4)["reason"], "no_approved_skill")
+        self.seed()
+        self.assertEqual(fixed("no-hook", 4, capabilities=CAPS | {"injectContext": False})["reason"],
+                         "unsupported_capabilities")
+        with self.assertRaises(ValueError):
+            self.decide("bad-arm", evaluation_policy="typo")
 
     def test_missing_and_invalidation(self):
         self.seed()

@@ -4,7 +4,8 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "demo": "node scripts/pi-demo.mjs"
+    "demo": "node scripts/pi-demo.mjs",
+    "evaluate": "python3 -m sase.evaluate"
   },
   "engines": {
     "node": ">=22.19.0"

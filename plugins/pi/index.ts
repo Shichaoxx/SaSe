@@ -51,6 +51,7 @@ export default function sase(pi: ExtensionAPI) {
   let client: CoreClient | undefined;
   let task: ReturnType<typeof newTask> | undefined;
   let envGoal: string | undefined;
+  let evaluationPolicy: "gated" | "fixed" | undefined;
   let workspace = "";
   let branch = "";
   const problems = new Set<string>();
@@ -68,6 +69,12 @@ export default function sase(pi: ExtensionAPI) {
       return;
     }
     try {
+      const arm = process.env.SASE_EVAL_POLICY;
+      if (arm !== undefined && arm !== "gated" && arm !== "fixed") {
+        diagnostic("Unknown evaluation policy; extension is inactive.");
+        return;
+      }
+      evaluationPolicy = arm;
       workspace = process.env.SASE_WORKSPACE || hash(realpathSync(ctx.cwd)).slice(0, 24);
       branch = ctx.sessionManager.getLeafId() || "root";
       envGoal = event.reason === "startup" ? process.env.SASE_GOAL : undefined;
@@ -127,8 +134,16 @@ export default function sase(pi: ExtensionAPI) {
     const next = event.result?.details?.has_next;
     const value = event.toolName === "sase_page" && !event.isError && typeof next === "boolean"
       ? next : "unknown";
-    void client.request({ ...owner.scope, op: "event", event_id: `${call.id}.${toolId}`,
-      seq: call.seq + 1, kind: "page", tool_call_id: toolId, value }).catch(() => {
+    const ref = `${call.id}.${toolId}`;
+    const source = { ...owner.scope, op: "event", seq: call.seq + 1, tool_call_id: toolId };
+    if (evaluationPolicy && value !== "unknown") {
+      const page = event.result?.details?.page;
+      if (Number.isSafeInteger(page) && page > 0) {
+        void client.request({ ...source, event_id: `${ref}.position`, kind: "first_page",
+          value: page === 1 }).catch(() => diagnostic("Page position acknowledgement unavailable."));
+      }
+    }
+    void client.request({ ...source, event_id: ref, kind: "page", value }).catch(() => {
       diagnostic("Tool feedback acknowledgement unavailable.");
     });
   });
@@ -162,6 +177,7 @@ export default function sase(pi: ExtensionAPI) {
       const d: Decision = call.decision ?? await client.request({
         ...owner.scope, op: "decide", call_id: call.id, episode_id: call.id,
         as_of_seq: call.seq, host: { name: "pi", version: VERSION },
+        ...(evaluationPolicy ? { evaluation_policy: evaluationPolicy } : {}),
         // No previous tool result => select an empty evidence window. Parallel
         // results share their sequence; the core leaves ambiguous joins unknown.
         ...(call.tools.length <= 1 ? { tool_call_id: call.tools[0] ?? `missing-${call.id}` } : {}),

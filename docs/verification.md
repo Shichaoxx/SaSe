@@ -12,7 +12,7 @@ make test
 make bench
 ```
 
-`make test` 包括 12 项 Python 测试、5 项 Node.js 测试和下表的 7 个 Pi 集成场景。要检查从分页事件到 provider 回执的完整记录，单独执行以下命令。演示结束时会打印账本的查询命令。
+`make test` 运行 Python 核心与协议测试、Node.js 适配器测试和下表的 Pi 集成场景。要检查从分页事件到 provider 回执的完整记录，单独执行以下命令。演示结束时会打印账本的查询命令。
 
 ```sh
 npm run demo -- --case=all-more --keep-evidence
