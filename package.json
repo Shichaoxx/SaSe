@@ -1,0 +1,15 @@
+{
+  "name": "sase-observe-recall",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "demo": "node scripts/pi-demo.mjs"
+  },
+  "engines": {
+    "node": ">=22.19.0"
+  },
+  "devDependencies": {
+    "@earendil-works/pi-coding-agent": "1.6.0"
+  }
+}

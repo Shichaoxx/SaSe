@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sase-observe-recall"
+version = "0.1.0"
+license = { file = "LICENSE" }
+description = "A local state-aware skill bank and intervention ledger"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.scripts]
+sase = "sase.cli:main"
+
+[tool.setuptools]
+packages = ["sase"]

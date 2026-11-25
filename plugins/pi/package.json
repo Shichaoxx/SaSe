@@ -1,0 +1,13 @@
+{
+  "name": "sase-pi",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "pi": {
+    "extensions": ["./index.ts"]
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "1.6.0"
+  }
+}

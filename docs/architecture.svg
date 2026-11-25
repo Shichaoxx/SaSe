@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 850 308" width="850" height="308" role="img" aria-labelledby="title description">
+  <title id="title">SaSe 的分页决策与证据流</title>
+  <desc id="description">Pi 提供任务目标与工具反馈。SaSe Core 将状态与已批准的技能版本匹配，在模型调用前决定注入或跳过。SQLite 保存决策快照和宿主能观察到的投递、曝光及结果。</desc>
+  <style>
+    .canvas { fill: #f4f7f7 }
+    .panel { fill: #fff; stroke: #b3c5c6 }
+    .core { fill: #153c40; stroke: #153c40 }
+    .bank { fill: #fff8e9; stroke: #cbb991 }
+    .ledger { fill: #e8f4f0; stroke: #92b8ac }
+    .label, .headline, .body, .small { font-family: -apple-system, system-ui, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif }
+    .label { fill: #455c60; font-size: 14px; font-weight: 600 }
+    .headline { fill: #172e32; font-size: 21px; font-weight: 650 }
+    .body { fill: #2e484d; font-size: 16px }
+    .small { fill: #3d585c; font-size: 15px }
+    .core-title { fill: #fff }
+    .core-body { fill: #dfefed }
+    .value { fill: #1b5556; font: 15px ui-monospace, SFMono-Regular, Consolas, monospace }
+    .line { stroke: #50767a; fill: none; stroke-width: 2; stroke-linejoin: round }
+    .head { fill: #50767a }
+    .rule { stroke: #d8e3e3 }
+    @media (prefers-color-scheme: dark) {
+      .canvas { fill: #172427 }
+      .panel { fill: #1e3236; stroke: #4a676b }
+      .core { fill: #184e50; stroke: #549b94 }
+      .bank { fill: #393323; stroke: #827655 }
+      .ledger { fill: #203d35; stroke: #588476 }
+      .label, .small { fill: #c0d4d4 }
+      .headline, .core-title { fill: #f0f6f4 }
+      .body, .core-body { fill: #d4e5e2 }
+      .value { fill: #a2dfd7 }
+      .line { stroke: #91b6b5 }
+      .head { fill: #91b6b5 }
+      .rule { stroke: #40585c }
+    }
+  </style>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+      <path class="head" d="M0 0 10 5 0 10Z"/>
+    </marker>
+  </defs>
+  <rect class="canvas" width="850" height="308" rx="15"/>
+  <g class="label">
+    <text x="26" y="33">Pi 观测到的事实</text>
+    <text x="294" y="33">本地决策</text>
+    <text x="598" y="33">宿主执行</text>
+  </g>
+  <rect class="panel" x="24" y="49" width="200" height="137" rx="11"/>
+  <text class="body" x="40" y="77">任务目标</text>
+  <text class="value" x="40" y="101">goal = all</text>
+  <path class="rule" d="M40 117H208"/>
+  <text class="body" x="40" y="143">工具反馈</text>
+  <text class="value" x="40" y="167">has_next = true</text>
+
+  <rect class="core" x="292" y="49" width="232" height="137" rx="11"/>
+  <text class="headline core-title" x="311" y="83">SaSe Core</text>
+  <text class="body core-body" x="311" y="117">生成决策前的状态快照</text>
+  <text class="body core-body" x="311" y="148">匹配已批准的技能版本</text>
+
+  <rect class="panel" x="596" y="49" width="230" height="137" rx="11"/>
+  <text class="headline" x="614" y="83">Pi 模型调用</text>
+  <text class="body" x="614" y="117">注入 · 追加技能提示</text>
+  <text class="body" x="614" y="148">跳过 · 沿用原有上下文</text>
+
+  <rect class="bank" x="24" y="220" width="200" height="67" rx="11"/>
+  <text class="headline" x="40" y="248">SkillBank</text>
+  <text class="small" x="40" y="272">工作区批准的 SKILL.md</text>
+
+  <rect class="ledger" x="292" y="220" width="534" height="67" rx="11"/>
+  <text class="headline" x="311" y="248">SQLite 干预账本</text>
+  <text class="small" x="311" y="272">决策与版本 → 上下文投递 → 可观察的曝光 → 执行结果</text>
+
+  <g class="line" marker-end="url(#arrow)">
+    <path d="M226 107H287"/>
+    <path d="M526 107H591"/>
+    <path d="M226 253H257V153H287"/>
+    <path d="M407 188V215"/>
+    <path d="M711 188V215"/>
+  </g>
+</svg>
