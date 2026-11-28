@@ -63,6 +63,34 @@ class TaskScoringTest(unittest.TestCase):
         self.assertEqual(score(self.all, observed(self.all, tool_pages=[]))["missing_pages"],
                          list(range(1, len(self.all["pages"]) + 1)))
 
+    def test_final_text_mentions_are_independent_of_strict_score_and_tool_coverage(self):
+        expected = self.first["pages"][0]
+        out_of_scope = self.first["pages"][1][0]
+        obs = observed(self.first, final_ids=None, answer_diagnostics={
+            "format": "fenced_json", "mention_counts": dict.fromkeys(expected, 1),
+        }, termination_reason="completed")
+        row = score(self.first, obs)
+        self.assertFalse(row["success"])
+        self.assertTrue(row["retrieval_complete"])
+        self.assertTrue(row["answer_diagnostics"]["exact_mentions"])
+        wrong = {"format": "text", "mention_counts": {expected[0]: 2, out_of_scope: 1}}
+        diag = score(self.first, obs | {"answer_diagnostics": wrong})["answer_diagnostics"]
+        self.assertEqual(diag["duplicate_counts"], {expected[0]: 2})
+        self.assertEqual(diag["unexpected_counts"], {out_of_scope: 1})
+        self.assertEqual(diag["missing_ids"], sorted(expected[1:]))
+        for bad in [{"format": "text", "mention_counts": {"arbitrary private text": 1}},
+                    {"format": "private text", "mention_counts": {}},
+                    {"format": "text", "mention_counts": {expected[0]: True}}]:
+            self.assertIsNone(score(self.first, obs | {"answer_diagnostics": bad})["answer_diagnostics"])
+        # Infrastructure failure and known model-call exhaustion override stale answer fields.
+        self.assertIsNone(score(self.first, obs | {"error": "timeout"})["answer_diagnostics"])
+        stop = score(self.first, observed(self.first, termination_reason="model_call_budget",
+                                          answer_diagnostics=obs["answer_diagnostics"]))
+        self.assertEqual((stop["status"], stop["success"]), ("scored", False))
+        self.assertIsNone(stop["answer_diagnostics"])
+        self.assertIsNone(stop["exact_ids"])
+        self.assertIn("model_call_budget", stop["reasons"])
+
     def test_missing_is_distinct_from_malformed_reply(self):
         self.assertFalse(score(self.all, observed(self.all, final_ids=None))["success"])
         bad = score(self.all, observed(self.all, final_ids=[3]))
@@ -112,6 +140,35 @@ class ReportTest(unittest.TestCase):
         for needle in ("dec01", "observed", rows[5]["trace_ref"], "not_run", "timeout"):
             self.assertIn(needle, md)
         self.assertNotIn("unneeded raw payload", md)
+
+    def test_reporting_budget_denominators_and_old_observations(self):
+        task = cases(3)[0]
+        rows = [observed(task, "native", total_tokens=19),  # legacy observation
+                observed(task, "fixed", total_tokens=25, final_ids=None,
+                         termination_reason="model_call_budget", tool_pages=[1] * 20),
+                observed(task, "gated", total_tokens=20, final_ids=None, termination_reason="completed",
+                         answer_diagnostics={"format": "text", "mention_counts": {
+                             value: 1 for page in task["pages"] for value in page}})]
+        summary = summarize([task], rows)
+        groups = {g["arm"]: g for g in summary["groups"] if g["task_type"] == "overall"}
+        self.assertEqual(groups["native"]["answer_observed"], 0)
+        self.assertEqual(groups["native"]["budget_observed"], 0)
+        self.assertEqual(groups["gated"]["format_counts"], {"text": 1})
+        self.assertEqual(groups["gated"]["answer_mentions_exact"], 1)
+        self.assertEqual((groups["fixed"]["budget_stops"], groups["fixed"]["failures"],
+                          groups["fixed"]["missing"]), (1, 1, 0))
+        self.assertEqual(groups["fixed"]["mean_tool_calls"], 20)
+        paired = next(p for p in summary["comparisons"] if p["baseline"] == "native" and
+                      p["arm"] == "fixed" and p["task_type"] == "overall")
+        self.assertEqual(paired["mean_token_delta"], 6)
+        self.assertIn("共 20", report(summary))
+        # Re-render a pre-diagnostics saved summary without fabricating final-text evidence.
+        for g in summary["groups"]:
+            del g["answer_observed"]
+        for row in summary["failures"]:
+            del row["answer_diagnostics"]
+            del row["observation_ref"]
+        self.assertNotIn("## 工具覆盖与最终回答", report(summary))
 
     def test_rejects_unplanned_or_duplicate_rows(self):
         tasks = cases()

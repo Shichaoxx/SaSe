@@ -3,6 +3,7 @@
 from collections import Counter
 from hashlib import sha256
 from itertools import combinations
+import re
 
 
 TASK_TYPES = ("all-more", "first-more", "all-last")
@@ -41,6 +42,35 @@ def cases(seed=0, per_type=1):
     return tasks
 
 
+ANSWER_FORMATS = ("strict_json", "json_wrong_schema", "fenced_json", "text", "empty")
+
+
+def _answer_diagnostics(observation, expected, all_ids):
+    # Older manifests have no final-text observations. A parsed ids array alone
+    # cannot reveal all mentions in the original text (e.g. escaped strings).
+    evidence = observation.get("answer_diagnostics")
+    if not isinstance(evidence, dict) or evidence.get("format") not in ANSWER_FORMATS:
+        return None
+    counts = evidence.get("mention_counts")
+    if not isinstance(counts, dict):
+        return None
+    for key, count in counts.items():
+        if not isinstance(key, str) or type(count) is not int or count < 1:
+            return None
+        known = key in all_ids and re.fullmatch(r"rec-[0-9a-fA-F]+", key)
+        if not known and not re.fullmatch(r"unknown:[0-9a-f]{64}", key):
+            return None
+    missing = sorted(expected - counts.keys())
+    extra = {key: n for key, n in counts.items() if key not in expected}
+    duplicates = {key: n for key, n in counts.items() if n > 1}
+    return {
+        "format": evidence["format"], "expected_id_count": len(expected),
+        "mentioned_expected_count": len(expected) - len(missing),
+        "exact_mentions": not (missing or extra or duplicates), "missing_ids": missing,
+        "unexpected_counts": extra, "duplicate_counts": duplicates,
+    }
+
+
 def score(case, observation):
     """Grade only the requested records and the executed page requests.
 
@@ -52,7 +82,10 @@ def score(case, observation):
     expected = {record for page in needed for record in page}
     expected_pages = set(range(1, len(needed) + 1))
     pages = observation.get("tool_pages")
-    final_ids = observation.get("final_ids")
+    error = observation.get("error")
+    termination = observation.get("termination_reason")
+    budget_stop = termination == "model_call_budget" if termination else None
+    final_ids = None if budget_stop else observation.get("final_ids")
     pages_known = isinstance(pages, list)
     valid_answer = isinstance(final_ids, list) and all(isinstance(x, str) for x in final_ids)
     reasons = []
@@ -69,7 +102,7 @@ def score(case, observation):
         if unexpected_ids:
             reasons.append("unexpected_ids")
     else:
-        reasons.append("invalid_final_answer")
+        reasons.append("model_call_budget" if budget_stop else "invalid_final_answer")
 
     missing_pages = out_of_range_reads = beyond_scope_reads = extra_calls = None
     if pages_known:
@@ -93,14 +126,19 @@ def score(case, observation):
     else:
         reasons.append("missing_tool_trace")
 
-    error = observation.get("error")
-    status = "missing" if error or not pages_known else "scored"
+    status = "missing" if error or (not pages_known and not budget_stop) else "scored"
+    diagnostics = None
+    if not error and not budget_stop:
+        diagnostics = _answer_diagnostics(observation, expected, {i for page in case["pages"] for i in page})
     if error:
         reasons = ["execution_error"]
     return {
         "status": status,
         "success": not reasons if status == "scored" else None,
-        "exact_ids": None if error and final_ids is None else (
+        "termination_reason": termination, "budget_stop": budget_stop,
+        "answer_diagnostics": diagnostics,
+        "retrieval_complete": not missing_pages if pages_known and not error else None,
+        "exact_ids": None if budget_stop or (error and final_ids is None) else (
             valid_answer and not (missing_ids or duplicate_ids or unexpected_ids)),
         "missing_ids": missing_ids,
         "duplicate_ids": duplicate_ids,
@@ -180,8 +218,21 @@ def summarize(tasks, observations, arms=ARMS):
                 "success_rate_scored": wins / len(graded) if graded else None,
                 "success_rate_bounds": [wins / len(rows), (wins + missing) / len(rows)],
             }
+            answers = [r["answer_diagnostics"] for r in rows if r["answer_diagnostics"] is not None]
+            group.update({
+                "answer_observed": len(answers),
+                "answer_mentions_exact": sum(a["exact_mentions"] for a in answers),
+                "format_counts": dict(Counter(a["format"] for a in answers)),
+                "retrieval_observed": sum(r["retrieval_complete"] is not None for r in rows),
+                "retrieval_complete": sum(r["retrieval_complete"] is True for r in rows),
+                "budget_observed": sum(r["budget_stop"] is not None for r in rows),
+                "budget_stops": sum(r["budget_stop"] is True for r in rows),
+            })
+            # Budget exhaustion can score as failure even if a tool trace is missing.
+            with_trace = [r for r in graded if r["tool_calls"] is not None]
+            group["scored_tool_traces"] = len(with_trace)
             for metric in ("tool_calls", "extra_calls", "out_of_range_reads", "beyond_scope_reads"):
-                group["mean_" + metric] = sum(r[metric] for r in graded) / len(graded) if graded else None
+                group["mean_" + metric] = sum(r[metric] for r in with_trace) / len(with_trace) if with_trace else None
             groups.append(group)
         for left, right in combinations(arms, 2):
             if right == "native":
@@ -199,6 +250,17 @@ def _cell(value):
     return str(value).replace("|", r"\|").replace("\n", " ")
 
 
+def _compact(items, limit=3):
+    if not items:
+        return "—"
+    text = ", ".join(str(i) for i in items[:limit])
+    return text if len(items) <= limit else f"{text} …（共 {len(items)}）"
+
+
+def _coverage(count, known):
+    return f"{count}/{known}" if known else "—"
+
+
 def report(summary):
     """Human-readable report; structured JSON retains each missing ID and reference."""
     lines = ["# 分页任务配对评测", "",
@@ -213,7 +275,7 @@ def report(summary):
         lines.append(f"| {row['task_type']} | {row['arm']} | {row['planned']} | {row['successes']} | "
                      f"{row['failures']} | {row['missing']} | {100*lower:.1f}%–{100*upper:.1f}% | {metrics} |")
 
-    lines.extend(["", "成功率范围按缺失运行全部失败或全部成功计算。调用量取已评分运行均值。", "",
+    lines.extend(["", "成功率范围按缺失运行全部失败或全部成功计算。调用量取有工具轨迹的已评分运行均值。", "",
                   "## 同任务配对差值", "",
                   "| 任务类型 | 策略减基线 | 完整配对 / 计划 | 胜 / 平 / 负 | 成功率差（百分点） | Token 配对数 | 平均额外 Token |",
                   "| --- | --- | ---: | ---: | ---: | ---: | ---: |"])
@@ -223,18 +285,44 @@ def report(summary):
                      f"{row['wins']} / {row['ties']} / {row['losses']} | {_number(row['success_delta_pp'])} | "
                      f"{row['token_pairs']} | {_number(row['mean_token_delta'])} |")
     lines.extend(["", "差值仅使用同一任务上双侧均已评分的配对。"
-                  "Token 差值还要求双方都有用量记录。结果描述本批任务、模型与运行配置。", "",
-                  "## 失败与缺失", ""])
+                  "Token 差值还要求双方都有用量记录。结果描述本批任务、模型与运行配置。"])
+    # Previously saved summary.json has no diagnostics section.
+    if all("answer_observed" in row for row in summary["groups"]):
+        lines.extend(["", "## 工具覆盖与最终回答", "",
+                      "每格按该项有观测的运行计数，分母独立。缺少观测显示为 —。"
+                      "读全所需页允许额外读取。提及匹配按可见最终文本中的合成 ID 和出现次数核对。"
+                      "严格 JSON 统计回答格式，任务成功仍按首表评分。", "",
+                      "| 任务类型 | 策略 | 已读全所需页 | 提及 ID 完全匹配 | 严格 JSON | 回答格式分布 | 达到调用预算 |",
+                      "| --- | --- | ---: | ---: | ---: | --- | ---: |"])
+        for group in summary["groups"]:
+            formats = group["format_counts"]
+            observed = group["answer_observed"]
+            columns = [group["task_type"], group["arm"],
+                       _coverage(group["retrieval_complete"], group["retrieval_observed"]),
+                       _coverage(group["answer_mentions_exact"], observed),
+                       _coverage(formats.get("strict_json", 0), observed),
+                       ", ".join(f"{name} × {n}" for name, n in sorted(formats.items())) or "—",
+                       _coverage(group["budget_stops"], group["budget_observed"])]
+            lines.append("| " + " | ".join(columns) + " |")
+    lines.extend(["", "## 失败与缺失", ""])
     if not summary["failures"]:
         lines.append("本批次所有计划运行均通过评分。")
     else:
-        lines.extend(["| 任务 | 策略 | 原因 | 实际读取页 | 轨迹引用 | 决策与曝光 |",
-                      "| --- | --- | --- | --- | --- | --- |"])
+        lines.extend(["| 任务 | 策略 | 原因 | 实际读取页 | 回答格式与 ID 提及 | 轨迹引用 | 决策与曝光 |",
+                      "| --- | --- | --- | --- | --- | --- | --- |"])
         for row in summary["failures"]:
-            evidence = ", ".join(f"{d['decision_id']} ({d['assignment']}, {d['exposure_status']})"
-                                 for d in row["decisions"]) or "—"
+            # Show injections first, with the complete ordered ledger reachable through the trace.
+            decisions = sorted(row.get("decisions") or [], key=lambda d: d["assignment"] != "inject")
+            evidence = _compact([f"{d['decision_id']} ({d['assignment']}, {d['exposure_status']})"
+                                 for d in decisions])
             reason = row["error"] or ", ".join(row["reasons"])
-            columns = [row["task_id"], row["arm"], reason, row["tool_pages"],
-                       ", ".join(x for x in (row["observation_ref"], row["trace_ref"]) if x) or "—", evidence]
+            answer = row.get("answer_diagnostics")
+            detail = "—"
+            if answer:
+                detail = (f"{answer['format']}，匹配 {answer['mentioned_expected_count']}/{answer['expected_id_count']}，"
+                          f"多余 {sum(answer['unexpected_counts'].values())} 次，"
+                          f"重复 {sum(n - 1 for n in answer['duplicate_counts'].values())} 次")
+            columns = [row["task_id"], row["arm"], reason, _compact(row["tool_pages"], limit=6), detail,
+                       ", ".join(x for x in (row.get("observation_ref"), row.get("trace_ref")) if x) or "—", evidence]
             lines.append("| " + " | ".join(_cell(col) for col in columns) + " |")
     return "\n".join(lines) + "\n"

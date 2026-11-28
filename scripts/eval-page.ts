@@ -7,6 +7,17 @@ export default function evalPage(pi: ExtensionAPI) {
   // Pi normally includes the temporary working directory in its structured
   // prompt. Use identical instructions in all arms, including native.
   pi.on("before_agent_start", () => ({systemPrompt: process.env.SASE_EVAL_SYSTEM_PROMPT!}));
+  // The final allowed response is charged even if it asks for more tools.
+  // Abort at the assistant message boundary, before any requested tool runs.
+  // Pi awaits this hook and propagates its abort signal through the tool
+  // batch and transport, including batches with multiple parallel calls.
+  const limit = Number(process.env.SASE_EVAL_MAX_MODEL_CALLS);
+  let replies = 0;
+  pi.on("message_end", ({message}, ctx) => {
+    if (message.role !== "assistant") return;
+    replies++;
+    if (replies === limit && message.content.some(part => part.type === "toolCall")) ctx.abort();
+  });
   pi.registerTool({
     name: "sase_page",
     label: "Read a page",

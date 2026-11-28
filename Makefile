@@ -2,7 +2,7 @@
 
 test:
 	python3 -m unittest discover -s tests -v
-	node --test plugins/pi/*.test.mjs
+	node --test plugins/pi/*.test.mjs scripts/*.test.mjs
 	npm run demo
 
 demo:

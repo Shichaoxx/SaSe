@@ -1,0 +1,1808 @@
+{
+  "model_sha256": "6a1a2eb6d15622bf3c96857206351ba97e1af16c30d7a74ee38970e434e9407e",
+  "engine": "llama.cpp b12726",
+  "batches": [
+    {
+      "variant": "baseline",
+      "manifest": {
+        "format": 2,
+        "started_utc": "2026-11-28T02:34:39.849862+00:00",
+        "mode": "live",
+        "model": "qwen2.5-1.5b-instruct-q4_k_m",
+        "pi_version": "1.6.0",
+        "seed": 42,
+        "temperature": 0,
+        "timeout_seconds": 90,
+        "max_model_calls": 6,
+        "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+        "tasks": [
+          {
+            "task_id": "pagination-v1-42-0000-all-more",
+            "task_type": "all-more",
+            "goal": "all",
+            "pages": [
+              [
+                "rec-143d631913dbf6fda6fd",
+                "rec-dbe0abe51d6f6f438e9a",
+                "rec-8d46cdbb803f13f6df43"
+              ],
+              [
+                "rec-255f07650520a960d360",
+                "rec-489ffda68966ebe48f83"
+              ]
+            ],
+            "prompt": "sase.goal=all\nRead all records and return their IDs. Use the sase_page tool, starting at page 1. Return a single JSON object {\"ids\":[...]} containing each requested record ID exactly once in any order."
+          },
+          {
+            "task_id": "pagination-v1-42-0000-first-more",
+            "task_type": "first-more",
+            "goal": "first",
+            "pages": [
+              [
+                "rec-143d631913dbf6fda6fd",
+                "rec-dbe0abe51d6f6f438e9a",
+                "rec-8d46cdbb803f13f6df43"
+              ],
+              [
+                "rec-255f07650520a960d360",
+                "rec-489ffda68966ebe48f83"
+              ]
+            ],
+            "prompt": "sase.goal=first\nRead only the first page and return its record IDs. Use the sase_page tool, starting at page 1. Return a single JSON object {\"ids\":[...]} containing each requested record ID exactly once in any order."
+          },
+          {
+            "task_id": "pagination-v1-42-0000-all-last",
+            "task_type": "all-last",
+            "goal": "all",
+            "pages": [
+              [
+                "rec-143d631913dbf6fda6fd",
+                "rec-dbe0abe51d6f6f438e9a",
+                "rec-8d46cdbb803f13f6df43"
+              ]
+            ],
+            "prompt": "sase.goal=all\nRead all records and return their IDs. Use the sase_page tool, starting at page 1. Return a single JSON object {\"ids\":[...]} containing each requested record ID exactly once in any order."
+          }
+        ],
+        "order": [
+          {
+            "task_id": "pagination-v1-42-0000-first-more",
+            "arm": "gated"
+          },
+          {
+            "task_id": "pagination-v1-42-0000-first-more",
+            "arm": "fixed"
+          },
+          {
+            "task_id": "pagination-v1-42-0000-first-more",
+            "arm": "native"
+          },
+          {
+            "task_id": "pagination-v1-42-0000-all-more",
+            "arm": "fixed"
+          },
+          {
+            "task_id": "pagination-v1-42-0000-all-more",
+            "arm": "gated"
+          },
+          {
+            "task_id": "pagination-v1-42-0000-all-more",
+            "arm": "native"
+          },
+          {
+            "task_id": "pagination-v1-42-0000-all-last",
+            "arm": "fixed"
+          },
+          {
+            "task_id": "pagination-v1-42-0000-all-last",
+            "arm": "gated"
+          },
+          {
+            "task_id": "pagination-v1-42-0000-all-last",
+            "arm": "native"
+          }
+        ],
+        "source_sha256": {
+          "examples/paginate/SKILL.md": "5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+          "plugins/pi/index.ts": "00245d84e4f746f950494a6e4012ddd9579d8fce2599e40e63dc4c016ca32295",
+          "plugins/pi/client.mjs": "e67113ee37f670f6bfd7106dfd2c7b4116767fa2dd69bcfe7cac88c09115dbf8",
+          "scripts/eval-page.ts": "181c8512d7c369b3628398740871fc39ce13bf09c76c3056407ebe3253002554",
+          "scripts/eval-runner.mjs": "4cebea7ef44c7546909b696707453626916517db3677b7f1c2cccaba064a72f4",
+          "scripts/answer-diagnostics.mjs": "488b84048ffa24389c212b031d3864e636b0aa82809f1e010f313807e28bc372",
+          "sase/core.py": "950568d5ac98d2506f2a4d68d9115282ec716975716d2b33c4485332bfd77107",
+          "sase/evaluation.py": "a305014f512da8b995a0f31babccd0f067daca283892c62ef291ec53a2371d0a",
+          "sase/evaluate.py": "81a037593cf69452e7a7acded8509b1609ab079e92f8f939b554f0969e0e7ebb",
+          "package-lock.json": "eb54082da0e0704160b62ab830c7a570d39f596757988b2e737e3d00e82c72a1"
+        }
+      },
+      "observations": [
+        {
+          "task_id": "pagination-v1-42-0000-first-more",
+          "arm": "gated",
+          "final_ids": null,
+          "tool_pages": [
+            1
+          ],
+          "answer_diagnostics": {
+            "format": "text",
+            "mention_counts": {
+              "rec-143d631913dbf6fda6fd": 1,
+              "rec-dbe0abe51d6f6f438e9a": 1,
+              "rec-8d46cdbb803f13f6df43": 1
+            }
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 723,
+          "usage": {
+            "input": 339,
+            "output": 102,
+            "cacheRead": 282,
+            "cacheWrite": 0,
+            "totalTokens": 723
+          },
+          "model_calls": 2,
+          "trace_ref": "pagination-v1-42-0000-first-more-gated",
+          "decisions": [
+            {
+              "decision_id": "9c8aee0f8d654210b580836c79bf8486",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "first_page_only",
+              "policy_version": "eval-gated-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [],
+              "goal": "first",
+              "has_next": true
+            }
+          ],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-42-0000-first-more",
+          "arm": "fixed",
+          "final_ids": null,
+          "tool_pages": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "answer_diagnostics": null,
+          "budget_exhausted": true,
+          "termination_reason": "model_call_budget",
+          "total_tokens": 2964,
+          "usage": {
+            "input": 381,
+            "output": 126,
+            "cacheRead": 2457,
+            "cacheWrite": 0,
+            "totalTokens": 2964
+          },
+          "model_calls": 6,
+          "trace_ref": "pagination-v1-42-0000-first-more-fixed",
+          "decisions": [
+            {
+              "decision_id": "bf4092de3220480988881392973ccffd",
+              "assignment": "inject",
+              "exposure_status": "observed",
+              "reason": "fixed_first_page",
+              "policy_version": "eval-fixed-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [
+                "context",
+                "request_payload"
+              ],
+              "goal": "first",
+              "has_next": true
+            }
+          ],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-42-0000-first-more",
+          "arm": "native",
+          "final_ids": null,
+          "tool_pages": [
+            1
+          ],
+          "answer_diagnostics": {
+            "format": "text",
+            "mention_counts": {
+              "rec-143d631913dbf6fda6fd": 1,
+              "rec-dbe0abe51d6f6f438e9a": 1,
+              "rec-8d46cdbb803f13f6df43": 1
+            }
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 723,
+          "usage": {
+            "input": 90,
+            "output": 102,
+            "cacheRead": 531,
+            "cacheWrite": 0,
+            "totalTokens": 723
+          },
+          "model_calls": 2,
+          "trace_ref": null,
+          "decisions": [],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-42-0000-all-more",
+          "arm": "fixed",
+          "final_ids": null,
+          "tool_pages": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "answer_diagnostics": null,
+          "budget_exhausted": true,
+          "termination_reason": "model_call_budget",
+          "total_tokens": 2941,
+          "usage": {
+            "input": 430,
+            "output": 126,
+            "cacheRead": 2385,
+            "cacheWrite": 0,
+            "totalTokens": 2941
+          },
+          "model_calls": 6,
+          "trace_ref": "pagination-v1-42-0000-all-more-fixed",
+          "decisions": [
+            {
+              "decision_id": "61017c390cd04ffb9b27347a5fa08ba7",
+              "assignment": "inject",
+              "exposure_status": "observed",
+              "reason": "fixed_first_page",
+              "policy_version": "eval-fixed-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [
+                "context",
+                "request_payload"
+              ],
+              "goal": "all",
+              "has_next": true
+            }
+          ],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-42-0000-all-more",
+          "arm": "gated",
+          "final_ids": null,
+          "tool_pages": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "answer_diagnostics": null,
+          "budget_exhausted": true,
+          "termination_reason": "model_call_budget",
+          "total_tokens": 2945,
+          "usage": {
+            "input": 292,
+            "output": 126,
+            "cacheRead": 2527,
+            "cacheWrite": 0,
+            "totalTokens": 2945
+          },
+          "model_calls": 6,
+          "trace_ref": "pagination-v1-42-0000-all-more-gated",
+          "decisions": [
+            {
+              "decision_id": "57233876861041d387ab335e67998824",
+              "assignment": "inject",
+              "exposure_status": "observed",
+              "reason": "continue_pagination",
+              "policy_version": "eval-gated-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [
+                "context",
+                "request_payload"
+              ],
+              "goal": "all",
+              "has_next": true
+            }
+          ],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-42-0000-all-more",
+          "arm": "native",
+          "final_ids": null,
+          "tool_pages": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "answer_diagnostics": null,
+          "budget_exhausted": true,
+          "termination_reason": "model_call_budget",
+          "total_tokens": 2813,
+          "usage": {
+            "input": 232,
+            "output": 126,
+            "cacheRead": 2455,
+            "cacheWrite": 0,
+            "totalTokens": 2813
+          },
+          "model_calls": 6,
+          "trace_ref": null,
+          "decisions": [],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-42-0000-all-last",
+          "arm": "fixed",
+          "final_ids": null,
+          "tool_pages": [
+            1,
+            2
+          ],
+          "answer_diagnostics": {
+            "format": "text",
+            "mention_counts": {}
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 1204,
+          "usage": {
+            "input": 266,
+            "output": 56,
+            "cacheRead": 882,
+            "cacheWrite": 0,
+            "totalTokens": 1204
+          },
+          "model_calls": 3,
+          "trace_ref": "pagination-v1-42-0000-all-last-fixed",
+          "decisions": [
+            {
+              "decision_id": "4b7ccae683834f379672f45f575d3817",
+              "assignment": "inject",
+              "exposure_status": "observed",
+              "reason": "fixed_first_page",
+              "policy_version": "eval-fixed-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [
+                "context",
+                "request_payload"
+              ],
+              "goal": "all",
+              "has_next": false
+            }
+          ],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-42-0000-all-last",
+          "arm": "gated",
+          "final_ids": null,
+          "tool_pages": [
+            1
+          ],
+          "answer_diagnostics": {
+            "format": "text",
+            "mention_counts": {
+              "rec-143d631913dbf6fda6fd": 1,
+              "rec-dbe0abe51d6f6f438e9a": 1,
+              "rec-8d46cdbb803f13f6df43": 1
+            }
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 705,
+          "usage": {
+            "input": 90,
+            "output": 92,
+            "cacheRead": 523,
+            "cacheWrite": 0,
+            "totalTokens": 705
+          },
+          "model_calls": 2,
+          "trace_ref": "pagination-v1-42-0000-all-last-gated",
+          "decisions": [
+            {
+              "decision_id": "4984c60153d34477b13be4fae5e70185",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "last_page",
+              "policy_version": "eval-gated-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [],
+              "goal": "all",
+              "has_next": false
+            }
+          ],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-42-0000-all-last",
+          "arm": "native",
+          "final_ids": null,
+          "tool_pages": [
+            1
+          ],
+          "answer_diagnostics": {
+            "format": "text",
+            "mention_counts": {
+              "rec-143d631913dbf6fda6fd": 1,
+              "rec-dbe0abe51d6f6f438e9a": 1,
+              "rec-8d46cdbb803f13f6df43": 1
+            }
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 705,
+          "usage": {
+            "input": 90,
+            "output": 92,
+            "cacheRead": 523,
+            "cacheWrite": 0,
+            "totalTokens": 705
+          },
+          "model_calls": 2,
+          "trace_ref": null,
+          "decisions": [],
+          "error": null
+        }
+      ]
+    },
+    {
+      "variant": "candidate",
+      "manifest": {
+        "format": 2,
+        "started_utc": "2026-11-28T02:34:57.535904+00:00",
+        "mode": "live",
+        "model": "qwen2.5-1.5b-instruct-q4_k_m",
+        "pi_version": "1.6.0",
+        "seed": 42,
+        "temperature": 0,
+        "timeout_seconds": 90,
+        "max_model_calls": 6,
+        "skill_version": "paginate@40000e084dc4ee81a53d305f6ad17de03fdc2d5ce0c346babf7ffc43a1c5f39e",
+        "tasks": [
+          {
+            "task_id": "pagination-v1-42-0000-all-more",
+            "task_type": "all-more",
+            "goal": "all",
+            "pages": [
+              [
+                "rec-143d631913dbf6fda6fd",
+                "rec-dbe0abe51d6f6f438e9a",
+                "rec-8d46cdbb803f13f6df43"
+              ],
+              [
+                "rec-255f07650520a960d360",
+                "rec-489ffda68966ebe48f83"
+              ]
+            ],
+            "prompt": "sase.goal=all\nRead all records and return their IDs. Use the sase_page tool, starting at page 1. Return a single JSON object {\"ids\":[...]} containing each requested record ID exactly once in any order."
+          },
+          {
+            "task_id": "pagination-v1-42-0000-first-more",
+            "task_type": "first-more",
+            "goal": "first",
+            "pages": [
+              [
+                "rec-143d631913dbf6fda6fd",
+                "rec-dbe0abe51d6f6f438e9a",
+                "rec-8d46cdbb803f13f6df43"
+              ],
+              [
+                "rec-255f07650520a960d360",
+                "rec-489ffda68966ebe48f83"
+              ]
+            ],
+            "prompt": "sase.goal=first\nRead only the first page and return its record IDs. Use the sase_page tool, starting at page 1. Return a single JSON object {\"ids\":[...]} containing each requested record ID exactly once in any order."
+          },
+          {
+            "task_id": "pagination-v1-42-0000-all-last",
+            "task_type": "all-last",
+            "goal": "all",
+            "pages": [
+              [
+                "rec-143d631913dbf6fda6fd",
+                "rec-dbe0abe51d6f6f438e9a",
+                "rec-8d46cdbb803f13f6df43"
+              ]
+            ],
+            "prompt": "sase.goal=all\nRead all records and return their IDs. Use the sase_page tool, starting at page 1. Return a single JSON object {\"ids\":[...]} containing each requested record ID exactly once in any order."
+          }
+        ],
+        "order": [
+          {
+            "task_id": "pagination-v1-42-0000-first-more",
+            "arm": "gated"
+          },
+          {
+            "task_id": "pagination-v1-42-0000-first-more",
+            "arm": "fixed"
+          },
+          {
+            "task_id": "pagination-v1-42-0000-first-more",
+            "arm": "native"
+          },
+          {
+            "task_id": "pagination-v1-42-0000-all-more",
+            "arm": "fixed"
+          },
+          {
+            "task_id": "pagination-v1-42-0000-all-more",
+            "arm": "gated"
+          },
+          {
+            "task_id": "pagination-v1-42-0000-all-more",
+            "arm": "native"
+          },
+          {
+            "task_id": "pagination-v1-42-0000-all-last",
+            "arm": "fixed"
+          },
+          {
+            "task_id": "pagination-v1-42-0000-all-last",
+            "arm": "gated"
+          },
+          {
+            "task_id": "pagination-v1-42-0000-all-last",
+            "arm": "native"
+          }
+        ],
+        "source_sha256": {
+          "examples/paginate/SKILL.md": "5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+          "plugins/pi/index.ts": "00245d84e4f746f950494a6e4012ddd9579d8fce2599e40e63dc4c016ca32295",
+          "plugins/pi/client.mjs": "e67113ee37f670f6bfd7106dfd2c7b4116767fa2dd69bcfe7cac88c09115dbf8",
+          "scripts/eval-page.ts": "181c8512d7c369b3628398740871fc39ce13bf09c76c3056407ebe3253002554",
+          "scripts/eval-runner.mjs": "4cebea7ef44c7546909b696707453626916517db3677b7f1c2cccaba064a72f4",
+          "scripts/answer-diagnostics.mjs": "488b84048ffa24389c212b031d3864e636b0aa82809f1e010f313807e28bc372",
+          "sase/core.py": "950568d5ac98d2506f2a4d68d9115282ec716975716d2b33c4485332bfd77107",
+          "sase/evaluation.py": "a305014f512da8b995a0f31babccd0f067daca283892c62ef291ec53a2371d0a",
+          "sase/evaluate.py": "81a037593cf69452e7a7acded8509b1609ab079e92f8f939b554f0969e0e7ebb",
+          "package-lock.json": "eb54082da0e0704160b62ab830c7a570d39f596757988b2e737e3d00e82c72a1"
+        }
+      },
+      "observations": [
+        {
+          "task_id": "pagination-v1-42-0000-first-more",
+          "arm": "gated",
+          "final_ids": null,
+          "tool_pages": [
+            1
+          ],
+          "answer_diagnostics": {
+            "format": "text",
+            "mention_counts": {
+              "rec-143d631913dbf6fda6fd": 1,
+              "rec-dbe0abe51d6f6f438e9a": 1,
+              "rec-8d46cdbb803f13f6df43": 1
+            }
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 723,
+          "usage": {
+            "input": 90,
+            "output": 102,
+            "cacheRead": 531,
+            "cacheWrite": 0,
+            "totalTokens": 723
+          },
+          "model_calls": 2,
+          "trace_ref": "pagination-v1-42-0000-first-more-gated",
+          "decisions": [
+            {
+              "decision_id": "03faa450e1b14465bfae6e3fac143683",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "first_page_only",
+              "policy_version": "eval-gated-first-page-v1",
+              "skill_version": "paginate@40000e084dc4ee81a53d305f6ad17de03fdc2d5ce0c346babf7ffc43a1c5f39e",
+              "receipt_locations": [],
+              "goal": "first",
+              "has_next": true
+            }
+          ],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-42-0000-first-more",
+          "arm": "fixed",
+          "final_ids": null,
+          "tool_pages": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "answer_diagnostics": null,
+          "budget_exhausted": true,
+          "termination_reason": "model_call_budget",
+          "total_tokens": 3488,
+          "usage": {
+            "input": 659,
+            "output": 126,
+            "cacheRead": 2703,
+            "cacheWrite": 0,
+            "totalTokens": 3488
+          },
+          "model_calls": 6,
+          "trace_ref": "pagination-v1-42-0000-first-more-fixed",
+          "decisions": [
+            {
+              "decision_id": "9510d91613434dfe8394a364f31a7945",
+              "assignment": "inject",
+              "exposure_status": "observed",
+              "reason": "fixed_first_page",
+              "policy_version": "eval-fixed-first-page-v1",
+              "skill_version": "paginate@40000e084dc4ee81a53d305f6ad17de03fdc2d5ce0c346babf7ffc43a1c5f39e",
+              "receipt_locations": [
+                "context",
+                "request_payload"
+              ],
+              "goal": "first",
+              "has_next": true
+            }
+          ],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-42-0000-first-more",
+          "arm": "native",
+          "final_ids": null,
+          "tool_pages": [
+            1
+          ],
+          "answer_diagnostics": {
+            "format": "text",
+            "mention_counts": {
+              "rec-143d631913dbf6fda6fd": 1,
+              "rec-dbe0abe51d6f6f438e9a": 1,
+              "rec-8d46cdbb803f13f6df43": 1
+            }
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 723,
+          "usage": {
+            "input": 90,
+            "output": 102,
+            "cacheRead": 531,
+            "cacheWrite": 0,
+            "totalTokens": 723
+          },
+          "model_calls": 2,
+          "trace_ref": null,
+          "decisions": [],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-42-0000-all-more",
+          "arm": "fixed",
+          "final_ids": null,
+          "tool_pages": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "answer_diagnostics": null,
+          "budget_exhausted": true,
+          "termination_reason": "model_call_budget",
+          "total_tokens": 3001,
+          "usage": {
+            "input": 348,
+            "output": 126,
+            "cacheRead": 2527,
+            "cacheWrite": 0,
+            "totalTokens": 3001
+          },
+          "model_calls": 6,
+          "trace_ref": "pagination-v1-42-0000-all-more-fixed",
+          "decisions": [
+            {
+              "decision_id": "0b3eb5c272ad48dbaa24b3990f05534a",
+              "assignment": "inject",
+              "exposure_status": "observed",
+              "reason": "fixed_first_page",
+              "policy_version": "eval-fixed-first-page-v1",
+              "skill_version": "paginate@40000e084dc4ee81a53d305f6ad17de03fdc2d5ce0c346babf7ffc43a1c5f39e",
+              "receipt_locations": [
+                "context",
+                "request_payload"
+              ],
+              "goal": "all",
+              "has_next": true
+            }
+          ],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-42-0000-all-more",
+          "arm": "gated",
+          "final_ids": null,
+          "tool_pages": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "answer_diagnostics": null,
+          "budget_exhausted": true,
+          "termination_reason": "model_call_budget",
+          "total_tokens": 3003,
+          "usage": {
+            "input": 350,
+            "output": 126,
+            "cacheRead": 2527,
+            "cacheWrite": 0,
+            "totalTokens": 3003
+          },
+          "model_calls": 6,
+          "trace_ref": "pagination-v1-42-0000-all-more-gated",
+          "decisions": [
+            {
+              "decision_id": "02221816e4be43b8b7e33d9058ca9585",
+              "assignment": "inject",
+              "exposure_status": "observed",
+              "reason": "continue_pagination",
+              "policy_version": "eval-gated-first-page-v1",
+              "skill_version": "paginate@40000e084dc4ee81a53d305f6ad17de03fdc2d5ce0c346babf7ffc43a1c5f39e",
+              "receipt_locations": [
+                "context",
+                "request_payload"
+              ],
+              "goal": "all",
+              "has_next": true
+            }
+          ],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-42-0000-all-more",
+          "arm": "native",
+          "final_ids": null,
+          "tool_pages": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "answer_diagnostics": null,
+          "budget_exhausted": true,
+          "termination_reason": "model_call_budget",
+          "total_tokens": 2813,
+          "usage": {
+            "input": 232,
+            "output": 126,
+            "cacheRead": 2455,
+            "cacheWrite": 0,
+            "totalTokens": 2813
+          },
+          "model_calls": 6,
+          "trace_ref": null,
+          "decisions": [],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-42-0000-all-last",
+          "arm": "fixed",
+          "final_ids": null,
+          "tool_pages": [
+            1,
+            2
+          ],
+          "answer_diagnostics": {
+            "format": "text",
+            "mention_counts": {}
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 1263,
+          "usage": {
+            "input": 323,
+            "output": 56,
+            "cacheRead": 884,
+            "cacheWrite": 0,
+            "totalTokens": 1263
+          },
+          "model_calls": 3,
+          "trace_ref": "pagination-v1-42-0000-all-last-fixed",
+          "decisions": [
+            {
+              "decision_id": "3b3b4c7e3bd44de08c3b8028b194d5b4",
+              "assignment": "inject",
+              "exposure_status": "observed",
+              "reason": "fixed_first_page",
+              "policy_version": "eval-fixed-first-page-v1",
+              "skill_version": "paginate@40000e084dc4ee81a53d305f6ad17de03fdc2d5ce0c346babf7ffc43a1c5f39e",
+              "receipt_locations": [
+                "context",
+                "request_payload"
+              ],
+              "goal": "all",
+              "has_next": false
+            }
+          ],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-42-0000-all-last",
+          "arm": "gated",
+          "final_ids": null,
+          "tool_pages": [
+            1
+          ],
+          "answer_diagnostics": {
+            "format": "text",
+            "mention_counts": {
+              "rec-143d631913dbf6fda6fd": 1,
+              "rec-dbe0abe51d6f6f438e9a": 1,
+              "rec-8d46cdbb803f13f6df43": 1
+            }
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 705,
+          "usage": {
+            "input": 90,
+            "output": 92,
+            "cacheRead": 523,
+            "cacheWrite": 0,
+            "totalTokens": 705
+          },
+          "model_calls": 2,
+          "trace_ref": "pagination-v1-42-0000-all-last-gated",
+          "decisions": [
+            {
+              "decision_id": "5d805122426d4f7ea15be61eb19df564",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "last_page",
+              "policy_version": "eval-gated-first-page-v1",
+              "skill_version": "paginate@40000e084dc4ee81a53d305f6ad17de03fdc2d5ce0c346babf7ffc43a1c5f39e",
+              "receipt_locations": [],
+              "goal": "all",
+              "has_next": false
+            }
+          ],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-42-0000-all-last",
+          "arm": "native",
+          "final_ids": null,
+          "tool_pages": [
+            1
+          ],
+          "answer_diagnostics": {
+            "format": "text",
+            "mention_counts": {
+              "rec-143d631913dbf6fda6fd": 1,
+              "rec-dbe0abe51d6f6f438e9a": 1,
+              "rec-8d46cdbb803f13f6df43": 1
+            }
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 705,
+          "usage": {
+            "input": 90,
+            "output": 92,
+            "cacheRead": 523,
+            "cacheWrite": 0,
+            "totalTokens": 705
+          },
+          "model_calls": 2,
+          "trace_ref": null,
+          "decisions": [],
+          "error": null
+        }
+      ]
+    },
+    {
+      "variant": "candidate",
+      "manifest": {
+        "format": 2,
+        "started_utc": "2026-11-28T02:35:15.456967+00:00",
+        "mode": "live",
+        "model": "qwen2.5-1.5b-instruct-q4_k_m",
+        "pi_version": "1.6.0",
+        "seed": 43,
+        "temperature": 0,
+        "timeout_seconds": 90,
+        "max_model_calls": 6,
+        "skill_version": "paginate@40000e084dc4ee81a53d305f6ad17de03fdc2d5ce0c346babf7ffc43a1c5f39e",
+        "tasks": [
+          {
+            "task_id": "pagination-v1-43-0000-all-more",
+            "task_type": "all-more",
+            "goal": "all",
+            "pages": [
+              [
+                "rec-98edea6404a4166240b7",
+                "rec-9de9ac9138c5194d7bff"
+              ],
+              [
+                "rec-b8d1c5040dec03a7047b"
+              ]
+            ],
+            "prompt": "sase.goal=all\nRead all records and return their IDs. Use the sase_page tool, starting at page 1. Return a single JSON object {\"ids\":[...]} containing each requested record ID exactly once in any order."
+          },
+          {
+            "task_id": "pagination-v1-43-0000-first-more",
+            "task_type": "first-more",
+            "goal": "first",
+            "pages": [
+              [
+                "rec-98edea6404a4166240b7",
+                "rec-9de9ac9138c5194d7bff"
+              ],
+              [
+                "rec-b8d1c5040dec03a7047b"
+              ]
+            ],
+            "prompt": "sase.goal=first\nRead only the first page and return its record IDs. Use the sase_page tool, starting at page 1. Return a single JSON object {\"ids\":[...]} containing each requested record ID exactly once in any order."
+          },
+          {
+            "task_id": "pagination-v1-43-0000-all-last",
+            "task_type": "all-last",
+            "goal": "all",
+            "pages": [
+              [
+                "rec-98edea6404a4166240b7",
+                "rec-9de9ac9138c5194d7bff"
+              ]
+            ],
+            "prompt": "sase.goal=all\nRead all records and return their IDs. Use the sase_page tool, starting at page 1. Return a single JSON object {\"ids\":[...]} containing each requested record ID exactly once in any order."
+          }
+        ],
+        "order": [
+          {
+            "task_id": "pagination-v1-43-0000-all-last",
+            "arm": "fixed"
+          },
+          {
+            "task_id": "pagination-v1-43-0000-all-last",
+            "arm": "native"
+          },
+          {
+            "task_id": "pagination-v1-43-0000-all-last",
+            "arm": "gated"
+          },
+          {
+            "task_id": "pagination-v1-43-0000-first-more",
+            "arm": "native"
+          },
+          {
+            "task_id": "pagination-v1-43-0000-first-more",
+            "arm": "gated"
+          },
+          {
+            "task_id": "pagination-v1-43-0000-first-more",
+            "arm": "fixed"
+          },
+          {
+            "task_id": "pagination-v1-43-0000-all-more",
+            "arm": "fixed"
+          },
+          {
+            "task_id": "pagination-v1-43-0000-all-more",
+            "arm": "native"
+          },
+          {
+            "task_id": "pagination-v1-43-0000-all-more",
+            "arm": "gated"
+          }
+        ],
+        "source_sha256": {
+          "examples/paginate/SKILL.md": "5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+          "plugins/pi/index.ts": "00245d84e4f746f950494a6e4012ddd9579d8fce2599e40e63dc4c016ca32295",
+          "plugins/pi/client.mjs": "e67113ee37f670f6bfd7106dfd2c7b4116767fa2dd69bcfe7cac88c09115dbf8",
+          "scripts/eval-page.ts": "181c8512d7c369b3628398740871fc39ce13bf09c76c3056407ebe3253002554",
+          "scripts/eval-runner.mjs": "4cebea7ef44c7546909b696707453626916517db3677b7f1c2cccaba064a72f4",
+          "scripts/answer-diagnostics.mjs": "488b84048ffa24389c212b031d3864e636b0aa82809f1e010f313807e28bc372",
+          "sase/core.py": "950568d5ac98d2506f2a4d68d9115282ec716975716d2b33c4485332bfd77107",
+          "sase/evaluation.py": "a305014f512da8b995a0f31babccd0f067daca283892c62ef291ec53a2371d0a",
+          "sase/evaluate.py": "81a037593cf69452e7a7acded8509b1609ab079e92f8f939b554f0969e0e7ebb",
+          "package-lock.json": "eb54082da0e0704160b62ab830c7a570d39f596757988b2e737e3d00e82c72a1"
+        }
+      },
+      "observations": [
+        {
+          "task_id": "pagination-v1-43-0000-all-last",
+          "arm": "fixed",
+          "final_ids": null,
+          "tool_pages": [
+            1,
+            2
+          ],
+          "answer_diagnostics": {
+            "format": "text",
+            "mention_counts": {}
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 1232,
+          "usage": {
+            "input": 303,
+            "output": 66,
+            "cacheRead": 863,
+            "cacheWrite": 0,
+            "totalTokens": 1232
+          },
+          "model_calls": 3,
+          "trace_ref": "pagination-v1-43-0000-all-last-fixed",
+          "decisions": [
+            {
+              "decision_id": "db2ecb372b164331bc01a2cb7716b745",
+              "assignment": "inject",
+              "exposure_status": "observed",
+              "reason": "fixed_first_page",
+              "policy_version": "eval-fixed-first-page-v1",
+              "skill_version": "paginate@40000e084dc4ee81a53d305f6ad17de03fdc2d5ce0c346babf7ffc43a1c5f39e",
+              "receipt_locations": [
+                "context",
+                "request_payload"
+              ],
+              "goal": "all",
+              "has_next": false
+            }
+          ],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-43-0000-all-last",
+          "arm": "native",
+          "final_ids": null,
+          "tool_pages": [
+            1
+          ],
+          "answer_diagnostics": {
+            "format": "text",
+            "mention_counts": {
+              "rec-98edea6404a4166240b7": 1,
+              "rec-9de9ac9138c5194d7bff": 1
+            }
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 665,
+          "usage": {
+            "input": 71,
+            "output": 71,
+            "cacheRead": 523,
+            "cacheWrite": 0,
+            "totalTokens": 665
+          },
+          "model_calls": 2,
+          "trace_ref": null,
+          "decisions": [],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-43-0000-all-last",
+          "arm": "gated",
+          "final_ids": null,
+          "tool_pages": [
+            1
+          ],
+          "answer_diagnostics": {
+            "format": "text",
+            "mention_counts": {
+              "rec-98edea6404a4166240b7": 1,
+              "rec-9de9ac9138c5194d7bff": 1
+            }
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 665,
+          "usage": {
+            "input": 71,
+            "output": 71,
+            "cacheRead": 523,
+            "cacheWrite": 0,
+            "totalTokens": 665
+          },
+          "model_calls": 2,
+          "trace_ref": "pagination-v1-43-0000-all-last-gated",
+          "decisions": [
+            {
+              "decision_id": "9d8cd135f38f4806863adaa2422df685",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "last_page",
+              "policy_version": "eval-gated-first-page-v1",
+              "skill_version": "paginate@40000e084dc4ee81a53d305f6ad17de03fdc2d5ce0c346babf7ffc43a1c5f39e",
+              "receipt_locations": [],
+              "goal": "all",
+              "has_next": false
+            }
+          ],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-43-0000-first-more",
+          "arm": "native",
+          "final_ids": null,
+          "tool_pages": [
+            1
+          ],
+          "answer_diagnostics": {
+            "format": "text",
+            "mention_counts": {
+              "rec-98edea6404a4166240b7": 1,
+              "rec-9de9ac9138c5194d7bff": 1
+            }
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 674,
+          "usage": {
+            "input": 71,
+            "output": 72,
+            "cacheRead": 531,
+            "cacheWrite": 0,
+            "totalTokens": 674
+          },
+          "model_calls": 2,
+          "trace_ref": null,
+          "decisions": [],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-43-0000-first-more",
+          "arm": "gated",
+          "final_ids": null,
+          "tool_pages": [
+            1
+          ],
+          "answer_diagnostics": {
+            "format": "text",
+            "mention_counts": {
+              "rec-98edea6404a4166240b7": 1,
+              "rec-9de9ac9138c5194d7bff": 1
+            }
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 674,
+          "usage": {
+            "input": 71,
+            "output": 72,
+            "cacheRead": 531,
+            "cacheWrite": 0,
+            "totalTokens": 674
+          },
+          "model_calls": 2,
+          "trace_ref": "pagination-v1-43-0000-first-more-gated",
+          "decisions": [
+            {
+              "decision_id": "22640c80b62f47c288bcee1a8d94807f",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "first_page_only",
+              "policy_version": "eval-gated-first-page-v1",
+              "skill_version": "paginate@40000e084dc4ee81a53d305f6ad17de03fdc2d5ce0c346babf7ffc43a1c5f39e",
+              "receipt_locations": [],
+              "goal": "first",
+              "has_next": true
+            }
+          ],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-43-0000-first-more",
+          "arm": "fixed",
+          "final_ids": null,
+          "tool_pages": [
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "answer_diagnostics": null,
+          "budget_exhausted": true,
+          "termination_reason": "model_call_budget",
+          "total_tokens": 3200,
+          "usage": {
+            "input": 561,
+            "output": 126,
+            "cacheRead": 2513,
+            "cacheWrite": 0,
+            "totalTokens": 3200
+          },
+          "model_calls": 6,
+          "trace_ref": "pagination-v1-43-0000-first-more-fixed",
+          "decisions": [
+            {
+              "decision_id": "91fe9fb3a7954b2582d9ebfb16e3812e",
+              "assignment": "inject",
+              "exposure_status": "observed",
+              "reason": "fixed_first_page",
+              "policy_version": "eval-fixed-first-page-v1",
+              "skill_version": "paginate@40000e084dc4ee81a53d305f6ad17de03fdc2d5ce0c346babf7ffc43a1c5f39e",
+              "receipt_locations": [
+                "context",
+                "request_payload"
+              ],
+              "goal": "first",
+              "has_next": true
+            }
+          ],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-43-0000-all-more",
+          "arm": "fixed",
+          "final_ids": null,
+          "tool_pages": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "answer_diagnostics": null,
+          "budget_exhausted": true,
+          "termination_reason": "model_call_budget",
+          "total_tokens": 2818,
+          "usage": {
+            "input": 404,
+            "output": 126,
+            "cacheRead": 2288,
+            "cacheWrite": 0,
+            "totalTokens": 2818
+          },
+          "model_calls": 6,
+          "trace_ref": "pagination-v1-43-0000-all-more-fixed",
+          "decisions": [
+            {
+              "decision_id": "018f3b3e0d584907960d55905486f07a",
+              "assignment": "inject",
+              "exposure_status": "observed",
+              "reason": "fixed_first_page",
+              "policy_version": "eval-fixed-first-page-v1",
+              "skill_version": "paginate@40000e084dc4ee81a53d305f6ad17de03fdc2d5ce0c346babf7ffc43a1c5f39e",
+              "receipt_locations": [
+                "context",
+                "request_payload"
+              ],
+              "goal": "all",
+              "has_next": true
+            }
+          ],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-43-0000-all-more",
+          "arm": "native",
+          "final_ids": null,
+          "tool_pages": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "answer_diagnostics": null,
+          "budget_exhausted": true,
+          "termination_reason": "model_call_budget",
+          "total_tokens": 2626,
+          "usage": {
+            "input": 190,
+            "output": 126,
+            "cacheRead": 2310,
+            "cacheWrite": 0,
+            "totalTokens": 2626
+          },
+          "model_calls": 6,
+          "trace_ref": null,
+          "decisions": [],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-43-0000-all-more",
+          "arm": "gated",
+          "final_ids": null,
+          "tool_pages": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "answer_diagnostics": null,
+          "budget_exhausted": true,
+          "termination_reason": "model_call_budget",
+          "total_tokens": 2814,
+          "usage": {
+            "input": 329,
+            "output": 126,
+            "cacheRead": 2359,
+            "cacheWrite": 0,
+            "totalTokens": 2814
+          },
+          "model_calls": 6,
+          "trace_ref": "pagination-v1-43-0000-all-more-gated",
+          "decisions": [
+            {
+              "decision_id": "6b9f6e4e937040b98eb30ffc39029fb1",
+              "assignment": "inject",
+              "exposure_status": "observed",
+              "reason": "continue_pagination",
+              "policy_version": "eval-gated-first-page-v1",
+              "skill_version": "paginate@40000e084dc4ee81a53d305f6ad17de03fdc2d5ce0c346babf7ffc43a1c5f39e",
+              "receipt_locations": [
+                "context",
+                "request_payload"
+              ],
+              "goal": "all",
+              "has_next": true
+            }
+          ],
+          "error": null
+        }
+      ]
+    },
+    {
+      "variant": "baseline",
+      "manifest": {
+        "format": 2,
+        "started_utc": "2026-11-28T02:35:32.406955+00:00",
+        "mode": "live",
+        "model": "qwen2.5-1.5b-instruct-q4_k_m",
+        "pi_version": "1.6.0",
+        "seed": 43,
+        "temperature": 0,
+        "timeout_seconds": 90,
+        "max_model_calls": 6,
+        "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+        "tasks": [
+          {
+            "task_id": "pagination-v1-43-0000-all-more",
+            "task_type": "all-more",
+            "goal": "all",
+            "pages": [
+              [
+                "rec-98edea6404a4166240b7",
+                "rec-9de9ac9138c5194d7bff"
+              ],
+              [
+                "rec-b8d1c5040dec03a7047b"
+              ]
+            ],
+            "prompt": "sase.goal=all\nRead all records and return their IDs. Use the sase_page tool, starting at page 1. Return a single JSON object {\"ids\":[...]} containing each requested record ID exactly once in any order."
+          },
+          {
+            "task_id": "pagination-v1-43-0000-first-more",
+            "task_type": "first-more",
+            "goal": "first",
+            "pages": [
+              [
+                "rec-98edea6404a4166240b7",
+                "rec-9de9ac9138c5194d7bff"
+              ],
+              [
+                "rec-b8d1c5040dec03a7047b"
+              ]
+            ],
+            "prompt": "sase.goal=first\nRead only the first page and return its record IDs. Use the sase_page tool, starting at page 1. Return a single JSON object {\"ids\":[...]} containing each requested record ID exactly once in any order."
+          },
+          {
+            "task_id": "pagination-v1-43-0000-all-last",
+            "task_type": "all-last",
+            "goal": "all",
+            "pages": [
+              [
+                "rec-98edea6404a4166240b7",
+                "rec-9de9ac9138c5194d7bff"
+              ]
+            ],
+            "prompt": "sase.goal=all\nRead all records and return their IDs. Use the sase_page tool, starting at page 1. Return a single JSON object {\"ids\":[...]} containing each requested record ID exactly once in any order."
+          }
+        ],
+        "order": [
+          {
+            "task_id": "pagination-v1-43-0000-all-last",
+            "arm": "fixed"
+          },
+          {
+            "task_id": "pagination-v1-43-0000-all-last",
+            "arm": "native"
+          },
+          {
+            "task_id": "pagination-v1-43-0000-all-last",
+            "arm": "gated"
+          },
+          {
+            "task_id": "pagination-v1-43-0000-first-more",
+            "arm": "native"
+          },
+          {
+            "task_id": "pagination-v1-43-0000-first-more",
+            "arm": "gated"
+          },
+          {
+            "task_id": "pagination-v1-43-0000-first-more",
+            "arm": "fixed"
+          },
+          {
+            "task_id": "pagination-v1-43-0000-all-more",
+            "arm": "fixed"
+          },
+          {
+            "task_id": "pagination-v1-43-0000-all-more",
+            "arm": "native"
+          },
+          {
+            "task_id": "pagination-v1-43-0000-all-more",
+            "arm": "gated"
+          }
+        ],
+        "source_sha256": {
+          "examples/paginate/SKILL.md": "5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+          "plugins/pi/index.ts": "00245d84e4f746f950494a6e4012ddd9579d8fce2599e40e63dc4c016ca32295",
+          "plugins/pi/client.mjs": "e67113ee37f670f6bfd7106dfd2c7b4116767fa2dd69bcfe7cac88c09115dbf8",
+          "scripts/eval-page.ts": "181c8512d7c369b3628398740871fc39ce13bf09c76c3056407ebe3253002554",
+          "scripts/eval-runner.mjs": "4cebea7ef44c7546909b696707453626916517db3677b7f1c2cccaba064a72f4",
+          "scripts/answer-diagnostics.mjs": "488b84048ffa24389c212b031d3864e636b0aa82809f1e010f313807e28bc372",
+          "sase/core.py": "950568d5ac98d2506f2a4d68d9115282ec716975716d2b33c4485332bfd77107",
+          "sase/evaluation.py": "a305014f512da8b995a0f31babccd0f067daca283892c62ef291ec53a2371d0a",
+          "sase/evaluate.py": "81a037593cf69452e7a7acded8509b1609ab079e92f8f939b554f0969e0e7ebb",
+          "package-lock.json": "eb54082da0e0704160b62ab830c7a570d39f596757988b2e737e3d00e82c72a1"
+        }
+      },
+      "observations": [
+        {
+          "task_id": "pagination-v1-43-0000-all-last",
+          "arm": "fixed",
+          "final_ids": null,
+          "tool_pages": [
+            1,
+            2
+          ],
+          "answer_diagnostics": {
+            "format": "text",
+            "mention_counts": {}
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 1173,
+          "usage": {
+            "input": 242,
+            "output": 66,
+            "cacheRead": 865,
+            "cacheWrite": 0,
+            "totalTokens": 1173
+          },
+          "model_calls": 3,
+          "trace_ref": "pagination-v1-43-0000-all-last-fixed",
+          "decisions": [
+            {
+              "decision_id": "8957f4ef95a340feb3ac9a7cb8c33b1d",
+              "assignment": "inject",
+              "exposure_status": "observed",
+              "reason": "fixed_first_page",
+              "policy_version": "eval-fixed-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [
+                "context",
+                "request_payload"
+              ],
+              "goal": "all",
+              "has_next": false
+            }
+          ],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-43-0000-all-last",
+          "arm": "native",
+          "final_ids": null,
+          "tool_pages": [
+            1
+          ],
+          "answer_diagnostics": {
+            "format": "text",
+            "mention_counts": {
+              "rec-98edea6404a4166240b7": 1,
+              "rec-9de9ac9138c5194d7bff": 1
+            }
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 665,
+          "usage": {
+            "input": 71,
+            "output": 71,
+            "cacheRead": 523,
+            "cacheWrite": 0,
+            "totalTokens": 665
+          },
+          "model_calls": 2,
+          "trace_ref": null,
+          "decisions": [],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-43-0000-all-last",
+          "arm": "gated",
+          "final_ids": null,
+          "tool_pages": [
+            1
+          ],
+          "answer_diagnostics": {
+            "format": "text",
+            "mention_counts": {
+              "rec-98edea6404a4166240b7": 1,
+              "rec-9de9ac9138c5194d7bff": 1
+            }
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 665,
+          "usage": {
+            "input": 71,
+            "output": 71,
+            "cacheRead": 523,
+            "cacheWrite": 0,
+            "totalTokens": 665
+          },
+          "model_calls": 2,
+          "trace_ref": "pagination-v1-43-0000-all-last-gated",
+          "decisions": [
+            {
+              "decision_id": "015d5ff000b444199df5e6c12c59f69d",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "last_page",
+              "policy_version": "eval-gated-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [],
+              "goal": "all",
+              "has_next": false
+            }
+          ],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-43-0000-first-more",
+          "arm": "native",
+          "final_ids": null,
+          "tool_pages": [
+            1
+          ],
+          "answer_diagnostics": {
+            "format": "text",
+            "mention_counts": {
+              "rec-98edea6404a4166240b7": 1,
+              "rec-9de9ac9138c5194d7bff": 1
+            }
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 674,
+          "usage": {
+            "input": 123,
+            "output": 72,
+            "cacheRead": 479,
+            "cacheWrite": 0,
+            "totalTokens": 674
+          },
+          "model_calls": 2,
+          "trace_ref": null,
+          "decisions": [],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-43-0000-first-more",
+          "arm": "gated",
+          "final_ids": null,
+          "tool_pages": [
+            1
+          ],
+          "answer_diagnostics": {
+            "format": "text",
+            "mention_counts": {
+              "rec-98edea6404a4166240b7": 1,
+              "rec-9de9ac9138c5194d7bff": 1
+            }
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 674,
+          "usage": {
+            "input": 71,
+            "output": 72,
+            "cacheRead": 531,
+            "cacheWrite": 0,
+            "totalTokens": 674
+          },
+          "model_calls": 2,
+          "trace_ref": "pagination-v1-43-0000-first-more-gated",
+          "decisions": [
+            {
+              "decision_id": "ac4eaf2a67614535a3a94063165dad05",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "first_page_only",
+              "policy_version": "eval-gated-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [],
+              "goal": "first",
+              "has_next": true
+            }
+          ],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-43-0000-first-more",
+          "arm": "fixed",
+          "final_ids": null,
+          "tool_pages": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "answer_diagnostics": null,
+          "budget_exhausted": true,
+          "termination_reason": "model_call_budget",
+          "total_tokens": 2782,
+          "usage": {
+            "input": 344,
+            "output": 126,
+            "cacheRead": 2312,
+            "cacheWrite": 0,
+            "totalTokens": 2782
+          },
+          "model_calls": 6,
+          "trace_ref": "pagination-v1-43-0000-first-more-fixed",
+          "decisions": [
+            {
+              "decision_id": "768fd49c9041472e944661229136b485",
+              "assignment": "inject",
+              "exposure_status": "observed",
+              "reason": "fixed_first_page",
+              "policy_version": "eval-fixed-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [
+                "context",
+                "request_payload"
+              ],
+              "goal": "first",
+              "has_next": true
+            }
+          ],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-43-0000-all-more",
+          "arm": "fixed",
+          "final_ids": null,
+          "tool_pages": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "answer_diagnostics": null,
+          "budget_exhausted": true,
+          "termination_reason": "model_call_budget",
+          "total_tokens": 2756,
+          "usage": {
+            "input": 271,
+            "output": 126,
+            "cacheRead": 2359,
+            "cacheWrite": 0,
+            "totalTokens": 2756
+          },
+          "model_calls": 6,
+          "trace_ref": "pagination-v1-43-0000-all-more-fixed",
+          "decisions": [
+            {
+              "decision_id": "0ce770da782043718ec4b42b3d440482",
+              "assignment": "inject",
+              "exposure_status": "observed",
+              "reason": "fixed_first_page",
+              "policy_version": "eval-fixed-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [
+                "context",
+                "request_payload"
+              ],
+              "goal": "all",
+              "has_next": true
+            }
+          ],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-43-0000-all-more",
+          "arm": "native",
+          "final_ids": null,
+          "tool_pages": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "answer_diagnostics": null,
+          "budget_exhausted": true,
+          "termination_reason": "model_call_budget",
+          "total_tokens": 2626,
+          "usage": {
+            "input": 190,
+            "output": 126,
+            "cacheRead": 2310,
+            "cacheWrite": 0,
+            "totalTokens": 2626
+          },
+          "model_calls": 6,
+          "trace_ref": null,
+          "decisions": [],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-43-0000-all-more",
+          "arm": "gated",
+          "final_ids": null,
+          "tool_pages": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "answer_diagnostics": null,
+          "budget_exhausted": true,
+          "termination_reason": "model_call_budget",
+          "total_tokens": 2752,
+          "usage": {
+            "input": 267,
+            "output": 126,
+            "cacheRead": 2359,
+            "cacheWrite": 0,
+            "totalTokens": 2752
+          },
+          "model_calls": 6,
+          "trace_ref": "pagination-v1-43-0000-all-more-gated",
+          "decisions": [
+            {
+              "decision_id": "3cd5d9d6123c414bbcf6dea28b6ece65",
+              "assignment": "inject",
+              "exposure_status": "observed",
+              "reason": "continue_pagination",
+              "policy_version": "eval-gated-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [
+                "context",
+                "request_payload"
+              ],
+              "goal": "all",
+              "has_next": true
+            }
+          ],
+          "error": null
+        }
+      ]
+    }
+  ]
+}

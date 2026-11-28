@@ -11,6 +11,7 @@ import sys
 import tempfile
 from urllib.parse import urlsplit
 
+from .core import parse_skill
 from .evaluation import ARMS, cases, report, summarize
 
 
@@ -37,7 +38,8 @@ def write_json(path, value):
 
 def fingerprints():
     sources = ("examples/paginate/SKILL.md", "plugins/pi/index.ts", "plugins/pi/client.mjs",
-               "scripts/eval-page.ts", "scripts/eval-runner.mjs", "sase/core.py",
+               "scripts/eval-page.ts", "scripts/eval-runner.mjs", "scripts/answer-diagnostics.mjs",
+               "sase/core.py",
                "sase/evaluation.py", "sase/evaluate.py", "package-lock.json")
     return {name: sha256((ROOT / name).read_bytes()).hexdigest() for name in sources}
 
@@ -45,6 +47,11 @@ def fingerprints():
 def run(args):
     if not (ROOT / "node_modules/.bin/pi").is_file():
         raise ValueError("Run npm ci in the SaSe checkout first.")
+    skill = args.skill.read_text(encoding="utf-8")
+    name, _ = parse_skill(skill)
+    if name != "paginate":
+        raise ValueError("This evaluation requires a SKILL.md whose name is paginate.")
+    skill_version = "paginate@" + sha256(skill.encode()).hexdigest()
     if args.output is None:
         parent = ROOT / "evaluation-runs"
         parent.mkdir(exist_ok=True)
@@ -52,15 +59,18 @@ def run(args):
     else:
         out = args.output.resolve()
         out.mkdir(mode=0o700, parents=True, exist_ok=False)
+    snapshot = out / "SKILL.md"
+    snapshot.write_bytes(skill.encode())
     tasks = cases(args.seed, args.per_type)
     indexed = {t["task_id"]: t for t in tasks}
     order = schedule(tasks, args.seed)
     mode = "fixture" if args.fixture else "live"
     model = "fixture" if args.fixture else args.model
     manifest = {
-        "format": 1, "started_utc": datetime.now(timezone.utc).isoformat(), "mode": mode,
+        "format": 2, "started_utc": datetime.now(timezone.utc).isoformat(), "mode": mode,
         "model": model, "pi_version": "1.6.0", "seed": args.seed,
-        "temperature": 0, "timeout_seconds": args.timeout, "tasks": tasks, "order": order,
+        "temperature": 0, "timeout_seconds": args.timeout, "max_model_calls": args.max_model_calls,
+        "skill_version": skill_version, "tasks": tasks, "order": order,
         "source_sha256": fingerprints(),
     }
     write_json(out / "manifest.json", manifest)
@@ -72,6 +82,8 @@ def run(args):
             config = {"case": indexed[trial["task_id"]], "arm": trial["arm"],
                       "fixture": args.fixture, "model": model, "baseUrl": args.base_url,
                       "keyEnv": args.key_env, "timeoutMs": args.timeout * 1000,
+                      "maxModelCalls": args.max_model_calls, "skillPath": str(snapshot),
+                      "expectedSkillVersion": skill_version,
                       "workspace": workspace, "db": str(out / "ledger.sqlite3")}
             try:
                 result = subprocess.run(["node", str(ROOT / "scripts/eval-runner.mjs")],
@@ -88,7 +100,8 @@ def run(args):
     finally:
         summary = summarize(tasks, observations)
         write_json(out / "summary.json", summary)
-        description = f"运行模式 `{mode}`，模型 `{model}`，任务种子 {args.seed}。"
+        description = (f"运行模式 `{mode}`，模型 `{model}`，任务种子 {args.seed}。"
+                       f"每次运行最多 {args.max_model_calls} 次模型调用。技能版本为 `{skill_version}`。")
         (out / "report.md").write_text(report(summary).replace("\n", "\n\n" + description + "\n", 1),
                                        encoding="utf-8")
     print(out / "report.md")
@@ -105,10 +118,14 @@ def main(argv=None):
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--per-type", type=int, default=1, help="number of tasks per task type")
     parser.add_argument("--timeout", type=int, default=90, help="per-trial deadline in seconds")
+    parser.add_argument("--max-model-calls", type=int, default=6,
+                        help="model-call budget shared by all arms (per trial)")
+    parser.add_argument("--skill", type=Path, default=ROOT / "examples/paginate/SKILL.md",
+                        help="pagination skill to freeze for fixed and gated trials")
     parser.add_argument("--output", type=Path, help="new local directory for evidence")
     args = parser.parse_args(argv)
-    if args.timeout < 1 or args.per_type < 1:
-        parser.error("--timeout and --per-type must be positive")
+    if min(args.timeout, args.per_type, args.max_model_calls) < 1:
+        parser.error("--timeout, --per-type and --max-model-calls must be positive")
     if args.fixture and (args.base_url or args.key_env):
         parser.error("--fixture uses its own local provider")
     if args.model:

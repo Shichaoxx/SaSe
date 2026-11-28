@@ -1,6 +1,6 @@
 // One fresh Pi task per invocation. The parent owns ordering, scoring and reports.
 import {spawn, execFileSync} from "node:child_process";
-import {createHash} from "node:crypto";
+import {analyzeAnswer} from "./answer-diagnostics.mjs";
 import {mkdir, mkdtemp, rm, writeFile} from "node:fs/promises";
 import http from "node:http";
 import {tmpdir} from "node:os";
@@ -62,18 +62,8 @@ function inputValid(config) {
     Array.isArray(task.pages) && task.pages.length > 0 &&
     task.pages.every(p => Array.isArray(p) && p.every(id => typeof id === "string")) &&
     typeof task.prompt === "string" && ["all", "first"].includes(task.goal) &&
+    Number.isSafeInteger(config.maxModelCalls) && config.maxModelCalls > 0 &&
     Number.isSafeInteger(config.timeoutMs) && config.timeoutMs > 0;
-}
-
-function parseIds(message, task) {
-  const text = message.content.filter(b => b.type === "text").map(b => b.text).join("").trim();
-  let answer;
-  try { answer = JSON.parse(text); } catch { return null; }
-  if (!answer || Object.keys(answer).length !== 1 || !Array.isArray(answer.ids) ||
-      !answer.ids.every(id => typeof id === "string")) return null;
-  const known = new Set(task.pages.flat());
-  // Preserve excess and duplicates for scoring without publishing arbitrary model text.
-  return answer.ids.map(id => known.has(id) ? id : "unknown:" + createHash("sha256").update(id).digest("hex"));
 }
 
 function providerError(message) {
@@ -91,7 +81,7 @@ async function collect(args, env, cwd, config, observation) {
   });
   const usage = {input: 0, output: 0, cacheRead: 0, cacheWrite: 0, totalTokens: 0};
   const requestedPages = new Map();
-  let completeUsage = true, final, error;
+  let completeUsage = true, exhausted = false, final, error;
   try {
     // Process the native event stream in memory. The harness only retains
     // structured measurements and IDs, including failed/invalid tool attempts.
@@ -99,6 +89,9 @@ async function collect(args, env, cwd, config, observation) {
       let event;
       try { event = JSON.parse(line); } catch { continue; }
       if (event.type === "tool_execution_end") {
+        // Pi emits a terminal error for every call cancelled by the budget,
+        // including parallel siblings. No page was read in those events.
+        if (exhausted && event.isError) continue;
         const requested = requestedPages.get(event.toolCallId);
         const page = event.result?.details?.page;
         // Preserve out-of-range attempts and distinguish them from completed reads.
@@ -110,7 +103,10 @@ async function collect(args, env, cwd, config, observation) {
       }
       const msg = event.message;
       if (event.type !== "message_end" || msg?.role !== "assistant") continue;
+      if (exhausted && (msg.stopReason === "aborted" || msg.stopReason === "error") &&
+          !msg.usage?.totalTokens) continue; // Abort bookkeeping without a completed request.
       observation.model_calls++;
+      if (observation.model_calls > config.maxModelCalls) error = "model_call_budget_violation";
       if (msg.stopReason === "error" || msg.stopReason === "aborted") error = providerError(msg);
       for (const part of msg.content || []) {
         if (part.type !== "toolCall") continue;
@@ -119,11 +115,19 @@ async function collect(args, env, cwd, config, observation) {
       }
       if (!msg.usage || !(msg.usage.totalTokens > 0)) completeUsage = false;
       else for (const field of Object.keys(usage)) usage[field] += msg.usage[field] ?? 0;
+      if (observation.model_calls === config.maxModelCalls && !error &&
+          msg.content?.some(part => part.type === "toolCall")) exhausted = true;
       final = msg;
     }
     const code = await exit;
-    observation.error = timeout ? "timeout" : error || (code !== 0 || !final ? "runtime_error" : null);
-    if (!observation.error) observation.final_ids = parseIds(final, config.case);
+    observation.error = timeout ? "timeout" : error || (!final || (code !== 0 && !exhausted) ? "runtime_error" : null);
+    if (!observation.error) {
+      observation.budget_exhausted = exhausted;
+      observation.termination_reason = exhausted ? "model_call_budget" : "completed";
+      if (!exhausted && !final.content.some(part => part.type === "toolCall")) {
+        Object.assign(observation, analyzeAnswer(final, config.case));
+      }
+    }
     if (!observation.error && completeUsage && final) {
       observation.total_tokens = usage.totalTokens;
       observation.usage = usage;
@@ -134,9 +138,11 @@ async function collect(args, env, cwd, config, observation) {
 }
 
 export async function runTrial(config) {
+  config = {maxModelCalls: 6, ...config};
   if (!inputValid(config)) throw new Error("invalid trial configuration");
   const task = config.case;
   const result = {task_id: task.task_id, arm: config.arm, final_ids: null, tool_pages: [],
+    answer_diagnostics: null, budget_exhausted: null, termination_reason: null,
     total_tokens: null, usage: null, model_calls: 0, trace_ref: null, decisions: [], error: null};
   const cwd = await mkdtemp(path.join(tmpdir(), "sase-trial-"));
   let server;
@@ -155,7 +161,11 @@ export async function runTrial(config) {
     const db = path.resolve(config.db);
     const scope = ["--db", db, "--workspace", config.workspace];
     if (config.arm !== "native") {
-      const {skill_version} = core(["import", path.join(root, "examples/paginate/SKILL.md"), ...scope]);
+      const {skill_version} = core(["import", config.skillPath ?? path.join(root, "examples/paginate/SKILL.md"), ...scope]);
+      if (config.expectedSkillVersion && skill_version !== config.expectedSkillVersion) {
+        result.error = "skill_version_mismatch";
+        return result;
+      }
       core(["approve", skill_version, ...scope]);
       result.trace_ref = config.workspace;
     }
@@ -174,7 +184,7 @@ export async function runTrial(config) {
     args.push("--", task.prompt);
     const env = {PATH: process.env.PATH, PYTHONPATH: root, PI_CODING_AGENT_DIR: agent, PI_OFFLINE: "1",
       SASE_TRIAL_CREDENTIAL: secret || "local-evaluation", SASE_EVAL_SYSTEM_PROMPT: systemPrompt,
-      SASE_EVAL_PAGES: JSON.stringify(task.pages),
+      SASE_EVAL_PAGES: JSON.stringify(task.pages), SASE_EVAL_MAX_MODEL_CALLS: String(config.maxModelCalls),
       SASE_DB: db, SASE_WORKSPACE: config.workspace, SASE_GOAL: task.goal, SASE_PYTHON: python};
     if (config.arm !== "native") env.SASE_EVAL_POLICY = config.arm;
     await collect(args, env, cwd, config, result);
