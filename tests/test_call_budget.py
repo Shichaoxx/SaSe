@@ -15,7 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 @contextmanager
-def provider(task, *, finish_on):
+def provider(task, *, finish_on, finish_reason="stop"):
     requests = []
     valid_text = json.dumps({"ids": task["pages"][0]})
 
@@ -30,7 +30,7 @@ def provider(task, *, finish_on):
             delta = {"role": "assistant"}
             if number == finish_on:
                 delta["content"] = valid_text
-                reason = "stop"
+                reason = finish_reason
             else:
                 # The tool-requesting message includes a valid-looking answer.
                 # On the last available call it must score as exhausted.
@@ -66,9 +66,10 @@ def provider(task, *, finish_on):
 
 
 class BudgetTests(unittest.TestCase):
-    def trial(self, *, arm, limit, finish_on):
+    def trial(self, *, arm, limit, finish_on, finish_reason="stop"):
         task = next(t for t in cases(19) if t["task_type"] == "first-more")
-        with tempfile.TemporaryDirectory() as directory, provider(task, finish_on=finish_on) as (url, requests):
+        with tempfile.TemporaryDirectory() as directory, provider(
+                task, finish_on=finish_on, finish_reason=finish_reason) as (url, requests):
             config = {"case": task, "arm": arm, "workspace": arm, "db": str(Path(directory, "ledger.sqlite3")),
                       "model": "synthetic", "baseUrl": url, "timeoutMs": 10000}
             if limit is not None:
@@ -88,6 +89,12 @@ class BudgetTests(unittest.TestCase):
         self.assertEqual(row["tool_pages"], [1])
         self.assertEqual(row["model_calls"], 2)
         self.assertTrue(score(task, row)["success"])
+
+    def test_provider_output_limit_is_not_a_natural_stop(self):
+        task, row = self.trial(arm="native", limit=2, finish_on=2, finish_reason="length")
+        self.assertEqual(row["termination_reason"], "output_limit")
+        self.assertEqual(row["answer_diagnostics"]["format"], "strict_json")
+        self.assertEqual(score(task, row)["reasons"], ["output_limit"])
 
     def test_parallel_tool_requests_at_limit(self):
         for arm in ARMS:

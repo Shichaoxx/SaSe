@@ -1,4 +1,6 @@
 import copy
+from hashlib import sha256
+import json
 import unittest
 
 from sase.evaluation import cases, report, score, summarize
@@ -32,6 +34,43 @@ class TaskScoringTest(unittest.TestCase):
             self.assertTrue(score(task, observed(task))["success"])
         with self.assertRaises(ValueError):
             cases(0, 0)
+
+    def test_sparse_profiles_have_distinct_namespaces_and_frozen_basic_manifest(self):
+        basic = cases(7, 3)
+        self.assertEqual(cases(7, 3, profile="basic"), basic)
+        frozen = sha256(json.dumps(basic, ensure_ascii=False, separators=(",", ":")).encode()).hexdigest()
+        self.assertEqual(frozen, "42545def0d3c8bddfef600a031ffeb23d829e69ef584880920cc5f89e7e214a0")
+        sparse = cases(7, 3, profile="sparse")
+        self.assertEqual(sparse, cases(7, 3, profile="sparse"))
+        self.assertFalse({t["task_id"] for t in sparse} & {t["task_id"] for t in basic})
+        def records(tasks):
+            return {record for task in tasks for page in task["pages"] for record in page}
+        self.assertFalse(records(sparse) & records(basic))
+        self.assertEqual([t["prompt"] for t in sparse], [t["prompt"] for t in basic])
+        for start in range(0, len(sparse), 3):
+            all_pages, first_only, single = (t["pages"] for t in sparse[start:start + 3])
+            self.assertEqual([bool(page) for page in all_pages], [True, False, True, True])
+            self.assertEqual(all_pages, first_only)
+            self.assertEqual(single, [all_pages[0]])
+        with self.assertRaises(ValueError):
+            cases(profile="typo")
+
+    def test_sparse_empty_page_is_required_and_first_page_scope_still_stops(self):
+        all_task, first_only, single = cases(7, profile="sparse")
+        self.assertTrue(score(all_task, observed(all_task))["success"])
+        skipped_empty = score(all_task, observed(all_task, tool_pages=[1, 3, 4]))
+        self.assertTrue(skipped_empty["exact_ids"])
+        self.assertFalse(skipped_empty["success"])
+        self.assertEqual(skipped_empty["missing_pages"], [2])
+        early = score(all_task, observed(all_task, tool_pages=[1], final_ids=all_task["pages"][0]))
+        self.assertFalse(early["success"])
+        self.assertEqual(early["missing_pages"], [2, 3, 4])
+        self.assertFalse(early["exact_ids"])
+        empty_stop = score(all_task, observed(all_task, tool_pages=[1, 2], final_ids=all_task["pages"][0]))
+        self.assertEqual(empty_stop["missing_pages"], [3, 4])
+        self.assertFalse(empty_stop["success"])
+        for task in (first_only, single):
+            self.assertTrue(score(task, observed(task, tool_pages=[1]))["success"])
 
     def test_scoring_is_arm_blind_and_inspects_answer(self):
         obs = observed(self.all)

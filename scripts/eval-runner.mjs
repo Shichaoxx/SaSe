@@ -123,7 +123,8 @@ async function collect(args, env, cwd, config, observation) {
     observation.error = timeout ? "timeout" : error || (!final || (code !== 0 && !exhausted) ? "runtime_error" : null);
     if (!observation.error) {
       observation.budget_exhausted = exhausted;
-      observation.termination_reason = exhausted ? "model_call_budget" : "completed";
+      observation.termination_reason = exhausted ? "model_call_budget"
+        : final.stopReason === "length" ? "output_limit" : "completed";
       if (!exhausted && !final.content.some(part => part.type === "toolCall")) {
         Object.assign(observation, analyzeAnswer(final, config.case));
       }

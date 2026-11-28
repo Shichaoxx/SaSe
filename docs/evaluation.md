@@ -18,14 +18,26 @@ npm run evaluate -- --model MODEL --base-url http://127.0.0.1:8080/v1 \
   --seed 42 --per-type 1 --max-model-calls 6 --output NEW_DIR
 ```
 
-- `--seed` 决定合成数据、任务执行顺序及每个任务内的策略顺序。模型的温度设为 0。重跑时应记录实际模型版本和服务配置。
-- `--per-type N` 生成每类 N 个任务，总计 9N 次运行。增加 N 会同时增加模型调用与 token 消耗。
+- 正式配对评估默认使用 `--seed 42 --per-type 1`。`--seed` 决定合成数据、任务执行顺序及每个任务内的策略顺序。模型的温度设为 0。重跑时应记录实际模型版本和服务配置。
+- `--per-type N` 在正式配对评估中生成每类 N 个任务，总计 9N 次运行。增加 N 会同时增加模型调用与 token 消耗。
 - `--max-model-calls N` 给三个策略相同的模型调用上限，默认 6。一次模型回复可以提出多次工具调用。第 N 次回复若给出最终答案，照常评分。若仍要求工具调用，运行在执行这些工具前结束。观测记录保留之前已执行的读取，以及模型服务报告的用量。
 - `--skill PATH` 选择一个名为 `paginate` 的技能，默认使用 `examples/paginate/SKILL.md`。批次启动时冻结其内容，Fixed 和 Gated 每次从快照导入，并核对内容哈希。比较技能版本时为每份技能使用独立的输出目录，保持任务种子、模型、预算和其他配置相同。[调用预算下的分页评估](bounded-pagination.md)
 - `--timeout` 设定单次运行的秒数，默认 90。省略 `--output` 时会在 `evaluation-runs/` 下创建独立批次目录。
-- 远程服务使用 HTTPS，并通过 `--key-env SASE_EVAL_API_KEY` 指定已经设置密钥的环境变量名。回环地址支持 HTTP，无需鉴权的本地服务可以省略该参数。服务报告 token 用量时，评估器会累计每次模型调用的用量。
+- 外部推理服务使用 HTTPS。先在运行环境中设置服务凭证，再传入 `--key-env SASE_EVAL_API_KEY` 或实际环境变量名。命令参数与批次清单只需模型配置，密钥由进程从环境读取。回环地址支持 HTTP，无需鉴权的本地服务可以省略该参数。服务报告 token 用量时，评估器会累计每次模型调用的用量。
 
 确定性 provider 按预设流程翻页并生成答案，适合重复检查评估工具。用于比较模型任务收益的批次应选择 `--model`。[批次入口](../sase/evaluate.py) · [Pi 运行器](../scripts/eval-runner.mjs)
+
+## 先校准 Native 基线
+
+`--calibrate-native` 使用同一套 Pi、工具和严格评分，仅运行 Native。按任务类型分别检查模型能否在请求范围内读齐页面、自然停止、返回严格 JSON 并完成整个任务。默认种子为 7301，每类三个任务，共九次 Native 运行。校准和正式配对评估应使用不同种子生成独立任务。确定模型与运行配置后，再在正式任务上让 Native、Fixed、Gated 各自作答。
+
+```sh
+npm run evaluate -- --fixture --calibrate-native
+npm run evaluate -- --calibrate-native --model MODEL \
+  --base-url http://127.0.0.1:8080/v1 --seed 7301 --per-type 3
+```
+
+第一条命令用脚本化 provider 验证校准流程。第二条命令通过模型端点测量 Native 能力，外部服务沿用同一 `--key-env` 方式。可用 `--per-type 1` 做三次运行的快速检查。证据完整时，`calibration.json` 将其标记为 `insufficient_sample`。证据缺失或异常优先标记为 `incomplete`。各类型均达到最低样本量后，`floor`、`ceiling`、`mixed` 分别表示本批严格成功数为零、全部成功、成功与失败并存。校准目录含任务清单、逐次观测和评分，技能版本为 `null`，不生成技能快照或干预账本。正式配对批次使用其自身的 Native 运行计算策略差值。
 
 ## 比较条件
 
@@ -37,17 +49,19 @@ npm run evaluate -- --model MODEL --base-url http://127.0.0.1:8080/v1 \
 
 Fixed 和 Gated 都只有一次干预机会，要求页号与分页反馈能归属到同一次成功的首页工具调用。Gated 缺乏继续分页的依据时，该机会以 `skip` 结束。重复读取首页不会触发第二次分配。此限制由评估运行器显式启用。日常 Pi 扩展继续在每次模型调用前依据当时的状态检索。[评估策略实现](../sase/core.py)
 
-| 任务类型 | 任务中的页 | 需要读取并返回的记录 |
+| 默认 `basic` 任务 | 任务中的页 | 需要读取并返回的记录 |
 | --- | --- | --- |
 | `all-more` | 两页 | 两页的全部记录 |
 | `first-more` | 两页 | 仅第一页 |
 | `all-last` | 一页 | 该页全部记录 |
 
+当 `basic` 的 Native 校准显示本批次全部严格成功（`ceiling`），可在新的校准批次中加 `--task-profile sparse`。该配置使用独立的任务和记录 ID 命名空间。多页任务扩展为四页，第二页没有记录，但仍提供指向第三页的有效游标。`all-more` 需要继续读取第三、四页，`first-more` 仍须停在第一页。`all-last` 仍只有一页。默认六次模型调用预算适用于两种配置。按顺序读取四页再回答共需五次模型调用。
+
 同一组任务共享首页数据，三种策略面对相同的页内容与目标。模型只能通过 `sase_page` 读取记录，最终回答须为一个含 `ids` 字符串数组的 JSON 对象。数组顺序不影响评分。
 
 ## 评分与分母
 
-只有实际读完所有要求的页、每条目标记录恰好返回一次、且读取范围符合请求，任务才算成功。评分器检查实际读取和最终 ID。完整回答的格式错误、遗漏或重复 ID、返回多余 ID、访问无效页或越过用户要求的范围，均记为失败。预算用尽且仍要求工具时，`termination_reason=model_call_budget`，该次运行计入已评分失败。超时、服务错误和缺少必要执行证据的运行单列为缺失。[评分器](../sase/evaluation.py)
+只有实际读完所有要求的页、每条目标记录恰好返回一次、且读取范围符合请求，任务才算成功。评分器检查实际读取和最终 ID。完整回答的格式错误、遗漏或重复 ID、返回多余 ID、访问无效页或越过用户要求的范围，均记为失败。预算用尽且仍要求工具时，`termination_reason=model_call_budget`，该次运行计入已评分失败。模型达到输出长度上限时标记为 `output_limit`，计入已评分失败，自然停止指标为否。超时、服务错误和缺少必要执行证据的运行单列为缺失。[评分器](../sase/evaluation.py)
 
 | 指标 | 计算方法 |
 | --- | --- |
@@ -84,6 +98,6 @@ python3 -m sase inspect --db NEW_DIR/ledger.sqlite3 \
   --workspace pagination-v1-42-0000-first-more-gated
 ```
 
-`inject` 表示 Core 已分配技能。位于 `request_payload` 的 `observed` 回执表示适配器在请求构造阶段看到了完整补丁。任务成功还需要独立核对返回的记录和实际页访问。解读小批次结果时，应同时报告模型、任务种子、完整配对数与缺失情况。[协议与重试语义](protocol.md)
+`inject` 表示 Core 已分配技能。位于 `request_payload` 的 `observed` 回执表示适配器在请求构造阶段看到了完整补丁。后端发生过载或限流并报告错误时，该次执行列为缺失。已有曝光回执只说明在相应位置观察到技能，不能据此判断服务完成推理。任务成功还需要独立核对返回的记录和实际页访问。解读小批次结果时，应同时报告模型、任务种子、完整配对数与缺失情况。[协议与重试语义](protocol.md)
 
 一次使用 Qwen2.5-1.5B-Instruct 的真实模型运行展示了成功率、工具调用和 token 成本如何分别解读。[分页试验结果](pagination-pilot.md)

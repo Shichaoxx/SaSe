@@ -10,17 +10,25 @@ TASK_TYPES = ("all-more", "first-more", "all-last")
 ARMS = ("native", "fixed", "gated")
 
 
-def cases(seed=0, per_type=1):
+def cases(seed=0, per_type=1, *, profile="basic"):
     """Emit reproducible tasks. Related goal variants share their first page."""
     if type(seed) is not int or type(per_type) is not int or per_type < 1:
         raise ValueError("seed must be an integer and per_type must be positive")
+    if profile not in ("basic", "sparse"):
+        raise ValueError("unknown pagination task profile")
+    namespace = "pagination-v1" if profile == "basic" else "pagination-sparse-v1"
+    page_count = 2 if profile == "basic" else 4
     tasks = []
     for index in range(per_type):
-        tag = f"pagination-v1/{seed}/{index}"
+        tag = f"{namespace}/{seed}/{index}"
         layout = sha256(tag.encode()).digest()
         pages = []
-        # Each trial has exactly one post-first-page choice in the matched design.
-        for page in range(2):
+        for page in range(page_count):
+            # In sparse tasks the second page has no rows, but its cursor still
+            # points to page 3. The tool derives continuation from page count.
+            if profile == "sparse" and page == 1:
+                pages.append([])
+                continue
             records = []
             for row in range(1 + layout[page] % 3):
                 digest = sha256(f"{tag}/{page}/{row}".encode()).hexdigest()
@@ -31,7 +39,7 @@ def cases(seed=0, per_type=1):
             instruction = ("Read only the first page and return its record IDs."
                            if goal == "first" else "Read all records and return their IDs.")
             tasks.append({
-                "task_id": f"pagination-v1-{seed}-{index:04d}-{kind}",
+                "task_id": f"{namespace}-{seed}-{index:04d}-{kind}",
                 "task_type": kind,
                 "goal": goal,
                 "pages": [page.copy() for page in (pages[:1] if kind == "all-last" else pages)],
@@ -89,6 +97,8 @@ def score(case, observation):
     pages_known = isinstance(pages, list)
     valid_answer = isinstance(final_ids, list) and all(isinstance(x, str) for x in final_ids)
     reasons = []
+    if termination == "output_limit":
+        reasons.append("output_limit")
     missing_ids = duplicate_ids = unexpected_ids = None
     if valid_answer:
         counts = Counter(final_ids)

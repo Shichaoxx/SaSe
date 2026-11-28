@@ -22,6 +22,38 @@ class PairedRunTests(unittest.TestCase):
             self.assertEqual(set(ARMS), {t["arm"] for t in group})
             self.assertEqual(1, len({t["task_id"] for t in group}))
 
+    def test_native_calibration_runs_without_skill_or_interventions(self):
+        with tempfile.TemporaryDirectory() as directory:
+            batch = Path(directory) / "calibration"
+            run = subprocess.run(
+                ["npm", "run", "evaluate", "--", "--fixture", "--calibrate-native",
+                 "--seed", "7301", "--per-type", "1", "--output", str(batch)],
+                cwd=Path(__file__).resolve().parents[1], capture_output=True, text=True, timeout=120,
+            )
+            self.assertEqual(run.returncode, 0, run.stdout + run.stderr)
+            manifest = json.loads((batch / "manifest.json").read_text())
+            observations = json.loads((batch / "observations.json").read_text())
+            summary = json.loads((batch / "summary.json").read_text())
+            calibration = json.loads((batch / "calibration.json").read_text())
+
+            self.assertEqual(manifest["arms"], ["native"])
+            self.assertEqual(manifest["pi_version"], "1.6.0")
+            self.assertIsNone(manifest["skill_version"])
+            self.assertEqual(len(observations), 3)
+            self.assertEqual(manifest["order"], [{k: o[k] for k in ("task_id", "arm")} for o in observations])
+            self.assertEqual({o["task_id"] for o in observations}, {t["task_id"] for t in cases(7301, 1)})
+            for observation in observations:
+                self.assertEqual(observation["arm"], "native")
+                self.assertIsNone(observation["error"])
+                self.assertGreater(observation["model_calls"], 0)
+                self.assertEqual(observation["decisions"], [])
+                self.assertIsNone(observation["trace_ref"])
+            self.assertEqual(summary["comparisons"], [])
+            self.assertEqual(summary["failures"], [])
+            self.assertEqual(calibration["status"], "insufficient_sample")
+            self.assertFalse((batch / "SKILL.md").exists())
+            self.assertFalse((batch / "ledger.sqlite3").exists())
+
     def test_fixture_scores_and_exposure(self):
         with tempfile.TemporaryDirectory() as directory:
             batch = Path(directory) / "batch"
