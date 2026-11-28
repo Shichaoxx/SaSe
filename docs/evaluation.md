@@ -100,4 +100,4 @@ python3 -m sase inspect --db NEW_DIR/ledger.sqlite3 \
 
 `inject` 表示 Core 已分配技能。位于 `request_payload` 的 `observed` 回执表示适配器在请求构造阶段看到了完整补丁。后端发生过载或限流并报告错误时，该次执行列为缺失。已有曝光回执只说明在相应位置观察到技能，不能据此判断服务完成推理。任务成功还需要独立核对返回的记录和实际页访问。解读小批次结果时，应同时报告模型、任务种子、完整配对数与缺失情况。[协议与重试语义](protocol.md)
 
-一次使用 Qwen2.5-1.5B-Instruct 的真实模型运行展示了成功率、工具调用和 token 成本如何分别解读。[分页试验结果](pagination-pilot.md)
+真实模型实验分别记录了 Qwen2.5-1.5B-Instruct 的调用预算与格式问题，以及本地 Qwen3.8-27B 的 Native 校准与三组配对结果。[1.5B 分页试验](pagination-pilot.md) · [27B 分页试验](local-27b-pagination.md)

@@ -65,5 +65,6 @@ cd /path/to/your/project
 
 - [Core 协议](docs/protocol.md) 定义状态快照、版本冻结、重试语义和账本字段。
 - [分页配对评估](docs/evaluation.md) 给出 Native、Fixed 和 Gated 三组的运行命令与评分口径。[调用预算试验](docs/bounded-pagination.md) 对照两个技能版本，分别报告严格成功率、工具成本和最终答案中的记录覆盖。
+- [本地 Qwen3.8-27B 实验](docs/local-27b-pagination.md) 先校准模型原生的取数与停止行为，再用独立任务比较三种策略。
 - [验证记录](docs/verification.md) 列出 Pi 及 provider 的实测范围、故障行为和延迟测量方法。
 - 项目采用 [MIT 许可证](LICENSE)。

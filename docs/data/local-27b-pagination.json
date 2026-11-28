@@ -1,0 +1,2494 @@
+{
+  "format": "sase-public-pagination-v1",
+  "source_commit": "25383fa2e270ae74e0e7b1ca9fea354ac48efe7c",
+  "runtime": {
+    "model": "Qwen/Qwen3.8-27B",
+    "quantization": "Unsloth UD-IQ3_XXS",
+    "weights": "https://huggingface.co/unsloth/Qwen3.8-27B-GGUF/blob/313447f257f7ebde0b968e4778feef774546ed81/Qwen3.8-27B-UD-IQ3_XXS.gguf",
+    "weight_bytes": 10934860704,
+    "weight_sha256": "c0b7c3038681ed2e3040456c1dd45f9858b6c2290bed172c70388a94874f3eee",
+    "engine": "llama.cpp",
+    "engine_build": "b12823-3ab385146",
+    "engine_release": "b12823",
+    "engine_archive": "llama-b12823-bin-macos-arm64.tar.gz",
+    "engine_archive_sha256": "709005367a1fa0e3bc025355a956b8cdb0e9eeea70f70ed9e9c5b1a04fff483a",
+    "chat_template_sha256": "12827f24b742ea4e80cdc12dbcf9622227056b9f797252a3149263d4f9aaadce",
+    "server_settings": {
+      "alias": "qwen3.8-27b-ud-iq3_xxs",
+      "ctx_size": 4096,
+      "parallel": 1,
+      "predict_default": 512,
+      "seed": 42,
+      "temperature": 0.0,
+      "reasoning": "off",
+      "chat_template_kwargs": {
+        "enable_thinking": false
+      },
+      "threads": 4,
+      "threads_batch": 4,
+      "batch_size": 128,
+      "ubatch_size": 64,
+      "flash_attn": "on",
+      "cache_type_k": "q8_0",
+      "cache_type_v": "q8_0",
+      "cache_ram": 0,
+      "jinja": true,
+      "cache_prompt": true
+    },
+    "pi_settings": {
+      "version": "1.6.0",
+      "api": "openai-completions",
+      "model_context_window": 8192,
+      "max_tokens_per_model_call": 768,
+      "thinking": "off",
+      "temperature": 0
+    }
+  },
+  "skill": {
+    "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+    "content_sha256": "5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+    "content": "---\nname: paginate\ndescription: Continue reading pages when the explicit goal requires all records.\n---\n\nIf the task requests all records and the latest page has a continuation cursor,\nread the next page with that cursor. Stop when the tool reports the final page.\n"
+  },
+  "batches": [
+    {
+      "manifest": {
+        "format": 3,
+        "started_utc": "2026-11-28T03:19:55.892183+00:00",
+        "mode": "live",
+        "design": "native_calibration",
+        "arms": [
+          "native"
+        ],
+        "model": "qwen3.8-27b-ud-iq3_xxs",
+        "pi_version": "1.6.0",
+        "seed": 7301,
+        "task_profile": "basic",
+        "temperature": 0,
+        "timeout_seconds": 240,
+        "max_model_calls": 6,
+        "skill_version": null,
+        "tasks": [
+          {
+            "task_id": "pagination-v1-7301-0000-all-more",
+            "task_type": "all-more",
+            "goal": "all",
+            "pages": [
+              [
+                "rec-a41c4a0a8e807c20b7ad",
+                "rec-8748931886ef7bdb7840"
+              ],
+              [
+                "rec-d6f982e4a5f243953a4d",
+                "rec-ab657c5777080658620b",
+                "rec-329daeeb1def564b8919"
+              ]
+            ],
+            "prompt": "sase.goal=all\nRead all records and return their IDs. Use the sase_page tool, starting at page 1. Return a single JSON object {\"ids\":[...]} containing each requested record ID exactly once in any order."
+          },
+          {
+            "task_id": "pagination-v1-7301-0000-first-more",
+            "task_type": "first-more",
+            "goal": "first",
+            "pages": [
+              [
+                "rec-a41c4a0a8e807c20b7ad",
+                "rec-8748931886ef7bdb7840"
+              ],
+              [
+                "rec-d6f982e4a5f243953a4d",
+                "rec-ab657c5777080658620b",
+                "rec-329daeeb1def564b8919"
+              ]
+            ],
+            "prompt": "sase.goal=first\nRead only the first page and return its record IDs. Use the sase_page tool, starting at page 1. Return a single JSON object {\"ids\":[...]} containing each requested record ID exactly once in any order."
+          },
+          {
+            "task_id": "pagination-v1-7301-0000-all-last",
+            "task_type": "all-last",
+            "goal": "all",
+            "pages": [
+              [
+                "rec-a41c4a0a8e807c20b7ad",
+                "rec-8748931886ef7bdb7840"
+              ]
+            ],
+            "prompt": "sase.goal=all\nRead all records and return their IDs. Use the sase_page tool, starting at page 1. Return a single JSON object {\"ids\":[...]} containing each requested record ID exactly once in any order."
+          },
+          {
+            "task_id": "pagination-v1-7301-0001-all-more",
+            "task_type": "all-more",
+            "goal": "all",
+            "pages": [
+              [
+                "rec-94d5e183e901f47d28f5",
+                "rec-985993c4fb9901f3ad13",
+                "rec-00286fbdd9067e25d656"
+              ],
+              [
+                "rec-bac23f6405fb0321037e",
+                "rec-7b900676b18e7a5d47c5"
+              ]
+            ],
+            "prompt": "sase.goal=all\nRead all records and return their IDs. Use the sase_page tool, starting at page 1. Return a single JSON object {\"ids\":[...]} containing each requested record ID exactly once in any order."
+          },
+          {
+            "task_id": "pagination-v1-7301-0001-first-more",
+            "task_type": "first-more",
+            "goal": "first",
+            "pages": [
+              [
+                "rec-94d5e183e901f47d28f5",
+                "rec-985993c4fb9901f3ad13",
+                "rec-00286fbdd9067e25d656"
+              ],
+              [
+                "rec-bac23f6405fb0321037e",
+                "rec-7b900676b18e7a5d47c5"
+              ]
+            ],
+            "prompt": "sase.goal=first\nRead only the first page and return its record IDs. Use the sase_page tool, starting at page 1. Return a single JSON object {\"ids\":[...]} containing each requested record ID exactly once in any order."
+          },
+          {
+            "task_id": "pagination-v1-7301-0001-all-last",
+            "task_type": "all-last",
+            "goal": "all",
+            "pages": [
+              [
+                "rec-94d5e183e901f47d28f5",
+                "rec-985993c4fb9901f3ad13",
+                "rec-00286fbdd9067e25d656"
+              ]
+            ],
+            "prompt": "sase.goal=all\nRead all records and return their IDs. Use the sase_page tool, starting at page 1. Return a single JSON object {\"ids\":[...]} containing each requested record ID exactly once in any order."
+          },
+          {
+            "task_id": "pagination-v1-7301-0002-all-more",
+            "task_type": "all-more",
+            "goal": "all",
+            "pages": [
+              [
+                "rec-222e5c7275f4d2c6f767",
+                "rec-85165c902ff9e2f7c76f",
+                "rec-a381ac51800e1edbeffa"
+              ],
+              [
+                "rec-0d7ff046e06d683f0fc6",
+                "rec-f1678f1bc2d1b4191ab1",
+                "rec-309c49433d08e0393ff1"
+              ]
+            ],
+            "prompt": "sase.goal=all\nRead all records and return their IDs. Use the sase_page tool, starting at page 1. Return a single JSON object {\"ids\":[...]} containing each requested record ID exactly once in any order."
+          },
+          {
+            "task_id": "pagination-v1-7301-0002-first-more",
+            "task_type": "first-more",
+            "goal": "first",
+            "pages": [
+              [
+                "rec-222e5c7275f4d2c6f767",
+                "rec-85165c902ff9e2f7c76f",
+                "rec-a381ac51800e1edbeffa"
+              ],
+              [
+                "rec-0d7ff046e06d683f0fc6",
+                "rec-f1678f1bc2d1b4191ab1",
+                "rec-309c49433d08e0393ff1"
+              ]
+            ],
+            "prompt": "sase.goal=first\nRead only the first page and return its record IDs. Use the sase_page tool, starting at page 1. Return a single JSON object {\"ids\":[...]} containing each requested record ID exactly once in any order."
+          },
+          {
+            "task_id": "pagination-v1-7301-0002-all-last",
+            "task_type": "all-last",
+            "goal": "all",
+            "pages": [
+              [
+                "rec-222e5c7275f4d2c6f767",
+                "rec-85165c902ff9e2f7c76f",
+                "rec-a381ac51800e1edbeffa"
+              ]
+            ],
+            "prompt": "sase.goal=all\nRead all records and return their IDs. Use the sase_page tool, starting at page 1. Return a single JSON object {\"ids\":[...]} containing each requested record ID exactly once in any order."
+          }
+        ],
+        "order": [
+          {
+            "task_id": "pagination-v1-7301-0001-first-more",
+            "arm": "native"
+          },
+          {
+            "task_id": "pagination-v1-7301-0000-all-more",
+            "arm": "native"
+          },
+          {
+            "task_id": "pagination-v1-7301-0002-all-more",
+            "arm": "native"
+          },
+          {
+            "task_id": "pagination-v1-7301-0002-all-last",
+            "arm": "native"
+          },
+          {
+            "task_id": "pagination-v1-7301-0000-all-last",
+            "arm": "native"
+          },
+          {
+            "task_id": "pagination-v1-7301-0000-first-more",
+            "arm": "native"
+          },
+          {
+            "task_id": "pagination-v1-7301-0002-first-more",
+            "arm": "native"
+          },
+          {
+            "task_id": "pagination-v1-7301-0001-all-more",
+            "arm": "native"
+          },
+          {
+            "task_id": "pagination-v1-7301-0001-all-last",
+            "arm": "native"
+          }
+        ],
+        "source_sha256": {
+          "examples/paginate/SKILL.md": "5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+          "plugins/pi/index.ts": "00245d84e4f746f950494a6e4012ddd9579d8fce2599e40e63dc4c016ca32295",
+          "plugins/pi/client.mjs": "e67113ee37f670f6bfd7106dfd2c7b4116767fa2dd69bcfe7cac88c09115dbf8",
+          "scripts/eval-page.ts": "181c8512d7c369b3628398740871fc39ce13bf09c76c3056407ebe3253002554",
+          "scripts/eval-runner.mjs": "d3e368c2f95defcba55cc055af8c19b09fba804afdaf3b8ebb7736e0e6834d5f",
+          "scripts/answer-diagnostics.mjs": "488b84048ffa24389c212b031d3864e636b0aa82809f1e010f313807e28bc372",
+          "sase/core.py": "950568d5ac98d2506f2a4d68d9115282ec716975716d2b33c4485332bfd77107",
+          "sase/evaluation.py": "6a65cf8703f3f210800a86adde9a94af8e1192b0d13b85128175588e165c8df7",
+          "sase/calibration.py": "d62c90857f37fcfec93b9e2e61dc6014cbfd75e054e6cb53143044c750205278",
+          "sase/evaluate.py": "9ec869a789feba81436c0ab6c93c04e338987720f5a6005a791425d55f208c88",
+          "package-lock.json": "eb54082da0e0704160b62ab830c7a570d39f596757988b2e737e3d00e82c72a1"
+        }
+      },
+      "observations": [
+        {
+          "task_id": "pagination-v1-7301-0001-first-more",
+          "arm": "native",
+          "final_ids": [
+            "rec-94d5e183e901f47d28f5",
+            "rec-985993c4fb9901f3ad13",
+            "rec-00286fbdd9067e25d656"
+          ],
+          "tool_pages": [
+            1,
+            1
+          ],
+          "answer_diagnostics": {
+            "format": "strict_json",
+            "mention_counts": {
+              "rec-94d5e183e901f47d28f5": 1,
+              "rec-985993c4fb9901f3ad13": 1,
+              "rec-00286fbdd9067e25d656": 1
+            }
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 1620,
+          "usage": {
+            "input": 568,
+            "output": 123,
+            "cacheRead": 929,
+            "cacheWrite": 0,
+            "totalTokens": 1620
+          },
+          "model_calls": 3,
+          "trace_ref": null,
+          "decisions": [],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-7301-0000-all-more",
+          "arm": "native",
+          "final_ids": [
+            "rec-a41c4a0a8e807c20b7ad",
+            "rec-8748931886ef7bdb7840",
+            "rec-d6f982e4a5f243953a4d",
+            "rec-ab657c5777080658620b",
+            "rec-329daeeb1def564b8919"
+          ],
+          "tool_pages": [
+            1,
+            2
+          ],
+          "answer_diagnostics": {
+            "format": "strict_json",
+            "mention_counts": {
+              "rec-a41c4a0a8e807c20b7ad": 1,
+              "rec-8748931886ef7bdb7840": 1,
+              "rec-d6f982e4a5f243953a4d": 1,
+              "rec-ab657c5777080658620b": 1,
+              "rec-329daeeb1def564b8919": 1
+            }
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 1595,
+          "usage": {
+            "input": 222,
+            "output": 161,
+            "cacheRead": 1212,
+            "cacheWrite": 0,
+            "totalTokens": 1595
+          },
+          "model_calls": 3,
+          "trace_ref": null,
+          "decisions": [],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-7301-0002-all-more",
+          "arm": "native",
+          "final_ids": [
+            "rec-222e5c7275f4d2c6f767",
+            "rec-85165c902ff9e2f7c76f",
+            "rec-a381ac51800e1edbeffa",
+            "rec-0d7ff046e06d683f0fc6",
+            "rec-f1678f1bc2d1b4191ab1",
+            "rec-309c49433d08e0393ff1"
+          ],
+          "tool_pages": [
+            1,
+            2,
+            3
+          ],
+          "answer_diagnostics": {
+            "format": "strict_json",
+            "mention_counts": {
+              "rec-222e5c7275f4d2c6f767": 1,
+              "rec-85165c902ff9e2f7c76f": 1,
+              "rec-a381ac51800e1edbeffa": 1,
+              "rec-0d7ff046e06d683f0fc6": 1,
+              "rec-f1678f1bc2d1b4191ab1": 1,
+              "rec-309c49433d08e0393ff1": 1
+            }
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 2347,
+          "usage": {
+            "input": 212,
+            "output": 210,
+            "cacheRead": 1925,
+            "cacheWrite": 0,
+            "totalTokens": 2347
+          },
+          "model_calls": 4,
+          "trace_ref": null,
+          "decisions": [],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-7301-0002-all-last",
+          "arm": "native",
+          "final_ids": [
+            "rec-222e5c7275f4d2c6f767",
+            "rec-85165c902ff9e2f7c76f",
+            "rec-a381ac51800e1edbeffa"
+          ],
+          "tool_pages": [
+            1,
+            2
+          ],
+          "answer_diagnostics": {
+            "format": "strict_json",
+            "mention_counts": {
+              "rec-222e5c7275f4d2c6f767": 1,
+              "rec-85165c902ff9e2f7c76f": 1,
+              "rec-a381ac51800e1edbeffa": 1
+            }
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 1527,
+          "usage": {
+            "input": 119,
+            "output": 120,
+            "cacheRead": 1288,
+            "cacheWrite": 0,
+            "totalTokens": 1527
+          },
+          "model_calls": 3,
+          "trace_ref": null,
+          "decisions": [],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-7301-0000-all-last",
+          "arm": "native",
+          "final_ids": [
+            "rec-a41c4a0a8e807c20b7ad",
+            "rec-8748931886ef7bdb7840"
+          ],
+          "tool_pages": [
+            1,
+            2
+          ],
+          "answer_diagnostics": {
+            "format": "strict_json",
+            "mention_counts": {
+              "rec-a41c4a0a8e807c20b7ad": 1,
+              "rec-8748931886ef7bdb7840": 1
+            }
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 1464,
+          "usage": {
+            "input": 98,
+            "output": 99,
+            "cacheRead": 1267,
+            "cacheWrite": 0,
+            "totalTokens": 1464
+          },
+          "model_calls": 3,
+          "trace_ref": null,
+          "decisions": [],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-7301-0000-first-more",
+          "arm": "native",
+          "final_ids": [
+            "rec-a41c4a0a8e807c20b7ad",
+            "rec-8748931886ef7bdb7840"
+          ],
+          "tool_pages": [
+            1,
+            1
+          ],
+          "answer_diagnostics": {
+            "format": "strict_json",
+            "mention_counts": {
+              "rec-a41c4a0a8e807c20b7ad": 1,
+              "rec-8748931886ef7bdb7840": 1
+            }
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 1524,
+          "usage": {
+            "input": 205,
+            "output": 99,
+            "cacheRead": 1220,
+            "cacheWrite": 0,
+            "totalTokens": 1524
+          },
+          "model_calls": 3,
+          "trace_ref": null,
+          "decisions": [],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-7301-0002-first-more",
+          "arm": "native",
+          "final_ids": [
+            "rec-222e5c7275f4d2c6f767",
+            "rec-85165c902ff9e2f7c76f",
+            "rec-a381ac51800e1edbeffa"
+          ],
+          "tool_pages": [
+            1,
+            1
+          ],
+          "answer_diagnostics": {
+            "format": "strict_json",
+            "mention_counts": {
+              "rec-222e5c7275f4d2c6f767": 1,
+              "rec-85165c902ff9e2f7c76f": 1,
+              "rec-a381ac51800e1edbeffa": 1
+            }
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 1608,
+          "usage": {
+            "input": 188,
+            "output": 120,
+            "cacheRead": 1300,
+            "cacheWrite": 0,
+            "totalTokens": 1608
+          },
+          "model_calls": 3,
+          "trace_ref": null,
+          "decisions": [],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-7301-0001-all-more",
+          "arm": "native",
+          "final_ids": [
+            "rec-94d5e183e901f47d28f5",
+            "rec-985993c4fb9901f3ad13",
+            "rec-00286fbdd9067e25d656",
+            "rec-bac23f6405fb0321037e",
+            "rec-7b900676b18e7a5d47c5"
+          ],
+          "tool_pages": [
+            1,
+            2,
+            3
+          ],
+          "answer_diagnostics": {
+            "format": "strict_json",
+            "mention_counts": {
+              "rec-94d5e183e901f47d28f5": 1,
+              "rec-985993c4fb9901f3ad13": 1,
+              "rec-00286fbdd9067e25d656": 1,
+              "rec-bac23f6405fb0321037e": 1,
+              "rec-7b900676b18e7a5d47c5": 1
+            }
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 2299,
+          "usage": {
+            "input": 250,
+            "output": 193,
+            "cacheRead": 1856,
+            "cacheWrite": 0,
+            "totalTokens": 2299
+          },
+          "model_calls": 4,
+          "trace_ref": null,
+          "decisions": [],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-7301-0001-all-last",
+          "arm": "native",
+          "final_ids": [
+            "rec-94d5e183e901f47d28f5",
+            "rec-985993c4fb9901f3ad13",
+            "rec-00286fbdd9067e25d656"
+          ],
+          "tool_pages": [
+            1,
+            1
+          ],
+          "answer_diagnostics": {
+            "format": "strict_json",
+            "mention_counts": {
+              "rec-94d5e183e901f47d28f5": 1,
+              "rec-985993c4fb9901f3ad13": 1,
+              "rec-00286fbdd9067e25d656": 1
+            }
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 1608,
+          "usage": {
+            "input": 194,
+            "output": 123,
+            "cacheRead": 1291,
+            "cacheWrite": 0,
+            "totalTokens": 1608
+          },
+          "model_calls": 3,
+          "trace_ref": null,
+          "decisions": [],
+          "error": null
+        }
+      ]
+    },
+    {
+      "manifest": {
+        "format": 3,
+        "started_utc": "2026-11-28T03:24:19.934527+00:00",
+        "mode": "live",
+        "design": "paired",
+        "arms": [
+          "native",
+          "fixed",
+          "gated"
+        ],
+        "model": "qwen3.8-27b-ud-iq3_xxs",
+        "pi_version": "1.6.0",
+        "seed": 8147,
+        "task_profile": "basic",
+        "temperature": 0,
+        "timeout_seconds": 240,
+        "max_model_calls": 6,
+        "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+        "tasks": [
+          {
+            "task_id": "pagination-v1-8147-0000-all-more",
+            "task_type": "all-more",
+            "goal": "all",
+            "pages": [
+              [
+                "rec-cfc8e6b761db7abb83a3",
+                "rec-1ac5decdcbf0d967f508"
+              ],
+              [
+                "rec-0278be5eadaf175c1a5b",
+                "rec-dba6488cd8f2c35c02ce"
+              ]
+            ],
+            "prompt": "sase.goal=all\nRead all records and return their IDs. Use the sase_page tool, starting at page 1. Return a single JSON object {\"ids\":[...]} containing each requested record ID exactly once in any order."
+          },
+          {
+            "task_id": "pagination-v1-8147-0000-first-more",
+            "task_type": "first-more",
+            "goal": "first",
+            "pages": [
+              [
+                "rec-cfc8e6b761db7abb83a3",
+                "rec-1ac5decdcbf0d967f508"
+              ],
+              [
+                "rec-0278be5eadaf175c1a5b",
+                "rec-dba6488cd8f2c35c02ce"
+              ]
+            ],
+            "prompt": "sase.goal=first\nRead only the first page and return its record IDs. Use the sase_page tool, starting at page 1. Return a single JSON object {\"ids\":[...]} containing each requested record ID exactly once in any order."
+          },
+          {
+            "task_id": "pagination-v1-8147-0000-all-last",
+            "task_type": "all-last",
+            "goal": "all",
+            "pages": [
+              [
+                "rec-cfc8e6b761db7abb83a3",
+                "rec-1ac5decdcbf0d967f508"
+              ]
+            ],
+            "prompt": "sase.goal=all\nRead all records and return their IDs. Use the sase_page tool, starting at page 1. Return a single JSON object {\"ids\":[...]} containing each requested record ID exactly once in any order."
+          },
+          {
+            "task_id": "pagination-v1-8147-0001-all-more",
+            "task_type": "all-more",
+            "goal": "all",
+            "pages": [
+              [
+                "rec-0967c6da268c4e8428ea",
+                "rec-46f029d2f0d6fdd16174"
+              ],
+              [
+                "rec-7340648098059d4b920e",
+                "rec-5e6f1b6d4756d72f03a2"
+              ]
+            ],
+            "prompt": "sase.goal=all\nRead all records and return their IDs. Use the sase_page tool, starting at page 1. Return a single JSON object {\"ids\":[...]} containing each requested record ID exactly once in any order."
+          },
+          {
+            "task_id": "pagination-v1-8147-0001-first-more",
+            "task_type": "first-more",
+            "goal": "first",
+            "pages": [
+              [
+                "rec-0967c6da268c4e8428ea",
+                "rec-46f029d2f0d6fdd16174"
+              ],
+              [
+                "rec-7340648098059d4b920e",
+                "rec-5e6f1b6d4756d72f03a2"
+              ]
+            ],
+            "prompt": "sase.goal=first\nRead only the first page and return its record IDs. Use the sase_page tool, starting at page 1. Return a single JSON object {\"ids\":[...]} containing each requested record ID exactly once in any order."
+          },
+          {
+            "task_id": "pagination-v1-8147-0001-all-last",
+            "task_type": "all-last",
+            "goal": "all",
+            "pages": [
+              [
+                "rec-0967c6da268c4e8428ea",
+                "rec-46f029d2f0d6fdd16174"
+              ]
+            ],
+            "prompt": "sase.goal=all\nRead all records and return their IDs. Use the sase_page tool, starting at page 1. Return a single JSON object {\"ids\":[...]} containing each requested record ID exactly once in any order."
+          },
+          {
+            "task_id": "pagination-v1-8147-0002-all-more",
+            "task_type": "all-more",
+            "goal": "all",
+            "pages": [
+              [
+                "rec-909788de79498e06a115",
+                "rec-4ba1bc2a5a877cdb3242"
+              ],
+              [
+                "rec-afb7b89240e5ae65d94d"
+              ]
+            ],
+            "prompt": "sase.goal=all\nRead all records and return their IDs. Use the sase_page tool, starting at page 1. Return a single JSON object {\"ids\":[...]} containing each requested record ID exactly once in any order."
+          },
+          {
+            "task_id": "pagination-v1-8147-0002-first-more",
+            "task_type": "first-more",
+            "goal": "first",
+            "pages": [
+              [
+                "rec-909788de79498e06a115",
+                "rec-4ba1bc2a5a877cdb3242"
+              ],
+              [
+                "rec-afb7b89240e5ae65d94d"
+              ]
+            ],
+            "prompt": "sase.goal=first\nRead only the first page and return its record IDs. Use the sase_page tool, starting at page 1. Return a single JSON object {\"ids\":[...]} containing each requested record ID exactly once in any order."
+          },
+          {
+            "task_id": "pagination-v1-8147-0002-all-last",
+            "task_type": "all-last",
+            "goal": "all",
+            "pages": [
+              [
+                "rec-909788de79498e06a115",
+                "rec-4ba1bc2a5a877cdb3242"
+              ]
+            ],
+            "prompt": "sase.goal=all\nRead all records and return their IDs. Use the sase_page tool, starting at page 1. Return a single JSON object {\"ids\":[...]} containing each requested record ID exactly once in any order."
+          }
+        ],
+        "order": [
+          {
+            "task_id": "pagination-v1-8147-0002-all-more",
+            "arm": "native"
+          },
+          {
+            "task_id": "pagination-v1-8147-0002-all-more",
+            "arm": "fixed"
+          },
+          {
+            "task_id": "pagination-v1-8147-0002-all-more",
+            "arm": "gated"
+          },
+          {
+            "task_id": "pagination-v1-8147-0001-all-more",
+            "arm": "fixed"
+          },
+          {
+            "task_id": "pagination-v1-8147-0001-all-more",
+            "arm": "gated"
+          },
+          {
+            "task_id": "pagination-v1-8147-0001-all-more",
+            "arm": "native"
+          },
+          {
+            "task_id": "pagination-v1-8147-0001-all-last",
+            "arm": "native"
+          },
+          {
+            "task_id": "pagination-v1-8147-0001-all-last",
+            "arm": "gated"
+          },
+          {
+            "task_id": "pagination-v1-8147-0001-all-last",
+            "arm": "fixed"
+          },
+          {
+            "task_id": "pagination-v1-8147-0000-all-last",
+            "arm": "native"
+          },
+          {
+            "task_id": "pagination-v1-8147-0000-all-last",
+            "arm": "fixed"
+          },
+          {
+            "task_id": "pagination-v1-8147-0000-all-last",
+            "arm": "gated"
+          },
+          {
+            "task_id": "pagination-v1-8147-0002-first-more",
+            "arm": "fixed"
+          },
+          {
+            "task_id": "pagination-v1-8147-0002-first-more",
+            "arm": "gated"
+          },
+          {
+            "task_id": "pagination-v1-8147-0002-first-more",
+            "arm": "native"
+          },
+          {
+            "task_id": "pagination-v1-8147-0002-all-last",
+            "arm": "native"
+          },
+          {
+            "task_id": "pagination-v1-8147-0002-all-last",
+            "arm": "gated"
+          },
+          {
+            "task_id": "pagination-v1-8147-0002-all-last",
+            "arm": "fixed"
+          },
+          {
+            "task_id": "pagination-v1-8147-0000-all-more",
+            "arm": "gated"
+          },
+          {
+            "task_id": "pagination-v1-8147-0000-all-more",
+            "arm": "fixed"
+          },
+          {
+            "task_id": "pagination-v1-8147-0000-all-more",
+            "arm": "native"
+          },
+          {
+            "task_id": "pagination-v1-8147-0001-first-more",
+            "arm": "native"
+          },
+          {
+            "task_id": "pagination-v1-8147-0001-first-more",
+            "arm": "gated"
+          },
+          {
+            "task_id": "pagination-v1-8147-0001-first-more",
+            "arm": "fixed"
+          },
+          {
+            "task_id": "pagination-v1-8147-0000-first-more",
+            "arm": "gated"
+          },
+          {
+            "task_id": "pagination-v1-8147-0000-first-more",
+            "arm": "fixed"
+          },
+          {
+            "task_id": "pagination-v1-8147-0000-first-more",
+            "arm": "native"
+          }
+        ],
+        "source_sha256": {
+          "examples/paginate/SKILL.md": "5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+          "plugins/pi/index.ts": "00245d84e4f746f950494a6e4012ddd9579d8fce2599e40e63dc4c016ca32295",
+          "plugins/pi/client.mjs": "e67113ee37f670f6bfd7106dfd2c7b4116767fa2dd69bcfe7cac88c09115dbf8",
+          "scripts/eval-page.ts": "181c8512d7c369b3628398740871fc39ce13bf09c76c3056407ebe3253002554",
+          "scripts/eval-runner.mjs": "d3e368c2f95defcba55cc055af8c19b09fba804afdaf3b8ebb7736e0e6834d5f",
+          "scripts/answer-diagnostics.mjs": "488b84048ffa24389c212b031d3864e636b0aa82809f1e010f313807e28bc372",
+          "sase/core.py": "950568d5ac98d2506f2a4d68d9115282ec716975716d2b33c4485332bfd77107",
+          "sase/evaluation.py": "6a65cf8703f3f210800a86adde9a94af8e1192b0d13b85128175588e165c8df7",
+          "sase/calibration.py": "d62c90857f37fcfec93b9e2e61dc6014cbfd75e054e6cb53143044c750205278",
+          "sase/evaluate.py": "9ec869a789feba81436c0ab6c93c04e338987720f5a6005a791425d55f208c88",
+          "package-lock.json": "eb54082da0e0704160b62ab830c7a570d39f596757988b2e737e3d00e82c72a1"
+        }
+      },
+      "observations": [
+        {
+          "task_id": "pagination-v1-8147-0002-all-more",
+          "arm": "native",
+          "final_ids": [
+            "rec-909788de79498e06a115",
+            "rec-4ba1bc2a5a877cdb3242",
+            "rec-afb7b89240e5ae65d94d"
+          ],
+          "tool_pages": [
+            1,
+            2,
+            3
+          ],
+          "answer_diagnostics": {
+            "format": "strict_json",
+            "mention_counts": {
+              "rec-909788de79498e06a115": 1,
+              "rec-4ba1bc2a5a877cdb3242": 1,
+              "rec-afb7b89240e5ae65d94d": 1
+            }
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 2134,
+          "usage": {
+            "input": 148,
+            "output": 146,
+            "cacheRead": 1840,
+            "cacheWrite": 0,
+            "totalTokens": 2134
+          },
+          "model_calls": 4,
+          "trace_ref": null,
+          "decisions": [],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-8147-0002-all-more",
+          "arm": "fixed",
+          "final_ids": [
+            "rec-909788de79498e06a115",
+            "rec-4ba1bc2a5a877cdb3242",
+            "rec-afb7b89240e5ae65d94d"
+          ],
+          "tool_pages": [
+            1,
+            2,
+            3
+          ],
+          "answer_diagnostics": {
+            "format": "strict_json",
+            "mention_counts": {
+              "rec-909788de79498e06a115": 1,
+              "rec-4ba1bc2a5a877cdb3242": 1,
+              "rec-afb7b89240e5ae65d94d": 1
+            }
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 2262,
+          "usage": {
+            "input": 309,
+            "output": 146,
+            "cacheRead": 1807,
+            "cacheWrite": 0,
+            "totalTokens": 2262
+          },
+          "model_calls": 4,
+          "trace_ref": "pagination-v1-8147-0002-all-more-fixed",
+          "decisions": [
+            {
+              "decision_id": "7fc4211420d0464b8abffd692e08c6e0",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "not_first_page",
+              "policy_version": "eval-fixed-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [],
+              "goal": "all",
+              "has_next": "unknown"
+            },
+            {
+              "decision_id": "d01bda09f00f441e892e4fb5fb9dfcdb",
+              "assignment": "inject",
+              "exposure_status": "observed",
+              "reason": "fixed_first_page",
+              "policy_version": "eval-fixed-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [
+                "context",
+                "request_payload"
+              ],
+              "goal": "all",
+              "has_next": true
+            },
+            {
+              "decision_id": "c1afd69c0ce2418aa82454bf20d7ec34",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "not_first_page",
+              "policy_version": "eval-fixed-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [],
+              "goal": "all",
+              "has_next": false
+            },
+            {
+              "decision_id": "51bf00af4360475aaffcde81b1a21b98",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "not_first_page",
+              "policy_version": "eval-fixed-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [],
+              "goal": "all",
+              "has_next": "unknown"
+            }
+          ],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-8147-0002-all-more",
+          "arm": "gated",
+          "final_ids": [
+            "rec-909788de79498e06a115",
+            "rec-4ba1bc2a5a877cdb3242",
+            "rec-afb7b89240e5ae65d94d"
+          ],
+          "tool_pages": [
+            1,
+            2,
+            3
+          ],
+          "answer_diagnostics": {
+            "format": "strict_json",
+            "mention_counts": {
+              "rec-909788de79498e06a115": 1,
+              "rec-4ba1bc2a5a877cdb3242": 1,
+              "rec-afb7b89240e5ae65d94d": 1
+            }
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 2266,
+          "usage": {
+            "input": 313,
+            "output": 146,
+            "cacheRead": 1807,
+            "cacheWrite": 0,
+            "totalTokens": 2266
+          },
+          "model_calls": 4,
+          "trace_ref": "pagination-v1-8147-0002-all-more-gated",
+          "decisions": [
+            {
+              "decision_id": "91d763d848014c2d8a90afe5116d5896",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "not_first_page",
+              "policy_version": "eval-gated-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [],
+              "goal": "all",
+              "has_next": "unknown"
+            },
+            {
+              "decision_id": "19196d723d5c4f9e8872eb4a87aa0bb0",
+              "assignment": "inject",
+              "exposure_status": "observed",
+              "reason": "continue_pagination",
+              "policy_version": "eval-gated-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [
+                "context",
+                "request_payload"
+              ],
+              "goal": "all",
+              "has_next": true
+            },
+            {
+              "decision_id": "5988b3c188544413893a73824b54bcae",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "not_first_page",
+              "policy_version": "eval-gated-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [],
+              "goal": "all",
+              "has_next": false
+            },
+            {
+              "decision_id": "200a7210c0ff43f3944c2b8a4e6e4839",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "not_first_page",
+              "policy_version": "eval-gated-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [],
+              "goal": "all",
+              "has_next": "unknown"
+            }
+          ],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-8147-0001-all-more",
+          "arm": "fixed",
+          "final_ids": [
+            "rec-0967c6da268c4e8428ea",
+            "rec-46f029d2f0d6fdd16174",
+            "rec-7340648098059d4b920e",
+            "rec-5e6f1b6d4756d72f03a2"
+          ],
+          "tool_pages": [
+            1,
+            2
+          ],
+          "answer_diagnostics": {
+            "format": "strict_json",
+            "mention_counts": {
+              "rec-0967c6da268c4e8428ea": 1,
+              "rec-46f029d2f0d6fdd16174": 1,
+              "rec-7340648098059d4b920e": 1,
+              "rec-5e6f1b6d4756d72f03a2": 1
+            }
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 1694,
+          "usage": {
+            "input": 311,
+            "output": 147,
+            "cacheRead": 1236,
+            "cacheWrite": 0,
+            "totalTokens": 1694
+          },
+          "model_calls": 3,
+          "trace_ref": "pagination-v1-8147-0001-all-more-fixed",
+          "decisions": [
+            {
+              "decision_id": "6eea0b14105848d99c1307cc92f05077",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "not_first_page",
+              "policy_version": "eval-fixed-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [],
+              "goal": "all",
+              "has_next": "unknown"
+            },
+            {
+              "decision_id": "f6da7aa8ee044fbbbb4ad03bf5b353ea",
+              "assignment": "inject",
+              "exposure_status": "observed",
+              "reason": "fixed_first_page",
+              "policy_version": "eval-fixed-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [
+                "context",
+                "request_payload"
+              ],
+              "goal": "all",
+              "has_next": true
+            },
+            {
+              "decision_id": "68b97a677dca4ee9bc0f486af29b74c4",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "not_first_page",
+              "policy_version": "eval-fixed-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [],
+              "goal": "all",
+              "has_next": false
+            }
+          ],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-8147-0001-all-more",
+          "arm": "gated",
+          "final_ids": [
+            "rec-0967c6da268c4e8428ea",
+            "rec-46f029d2f0d6fdd16174",
+            "rec-7340648098059d4b920e",
+            "rec-5e6f1b6d4756d72f03a2"
+          ],
+          "tool_pages": [
+            1,
+            2
+          ],
+          "answer_diagnostics": {
+            "format": "strict_json",
+            "mention_counts": {
+              "rec-0967c6da268c4e8428ea": 1,
+              "rec-46f029d2f0d6fdd16174": 1,
+              "rec-7340648098059d4b920e": 1,
+              "rec-5e6f1b6d4756d72f03a2": 1
+            }
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 1702,
+          "usage": {
+            "input": 319,
+            "output": 147,
+            "cacheRead": 1236,
+            "cacheWrite": 0,
+            "totalTokens": 1702
+          },
+          "model_calls": 3,
+          "trace_ref": "pagination-v1-8147-0001-all-more-gated",
+          "decisions": [
+            {
+              "decision_id": "2c0f41b2e32c419b8438eb9a1f410e1e",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "not_first_page",
+              "policy_version": "eval-gated-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [],
+              "goal": "all",
+              "has_next": "unknown"
+            },
+            {
+              "decision_id": "6034a09fe96746228fe322c24a8a0336",
+              "assignment": "inject",
+              "exposure_status": "observed",
+              "reason": "continue_pagination",
+              "policy_version": "eval-gated-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [
+                "context",
+                "request_payload"
+              ],
+              "goal": "all",
+              "has_next": true
+            },
+            {
+              "decision_id": "37632c7b3c53499182cb60c5fb750408",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "not_first_page",
+              "policy_version": "eval-gated-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [],
+              "goal": "all",
+              "has_next": false
+            }
+          ],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-8147-0001-all-more",
+          "arm": "native",
+          "final_ids": [
+            "rec-0967c6da268c4e8428ea",
+            "rec-46f029d2f0d6fdd16174",
+            "rec-7340648098059d4b920e",
+            "rec-5e6f1b6d4756d72f03a2"
+          ],
+          "tool_pages": [
+            1,
+            2
+          ],
+          "answer_diagnostics": {
+            "format": "strict_json",
+            "mention_counts": {
+              "rec-0967c6da268c4e8428ea": 1,
+              "rec-46f029d2f0d6fdd16174": 1,
+              "rec-7340648098059d4b920e": 1,
+              "rec-5e6f1b6d4756d72f03a2": 1
+            }
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 1569,
+          "usage": {
+            "input": 153,
+            "output": 147,
+            "cacheRead": 1269,
+            "cacheWrite": 0,
+            "totalTokens": 1569
+          },
+          "model_calls": 3,
+          "trace_ref": null,
+          "decisions": [],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-8147-0001-all-last",
+          "arm": "native",
+          "final_ids": [
+            "rec-0967c6da268c4e8428ea",
+            "rec-46f029d2f0d6fdd16174"
+          ],
+          "tool_pages": [
+            1,
+            2
+          ],
+          "answer_diagnostics": {
+            "format": "strict_json",
+            "mention_counts": {
+              "rec-0967c6da268c4e8428ea": 1,
+              "rec-46f029d2f0d6fdd16174": 1
+            }
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 1470,
+          "usage": {
+            "input": 100,
+            "output": 101,
+            "cacheRead": 1269,
+            "cacheWrite": 0,
+            "totalTokens": 1470
+          },
+          "model_calls": 3,
+          "trace_ref": null,
+          "decisions": [],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-8147-0001-all-last",
+          "arm": "gated",
+          "final_ids": [
+            "rec-0967c6da268c4e8428ea",
+            "rec-46f029d2f0d6fdd16174"
+          ],
+          "tool_pages": [
+            1,
+            2
+          ],
+          "answer_diagnostics": {
+            "format": "strict_json",
+            "mention_counts": {
+              "rec-0967c6da268c4e8428ea": 1,
+              "rec-46f029d2f0d6fdd16174": 1
+            }
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 1470,
+          "usage": {
+            "input": 100,
+            "output": 101,
+            "cacheRead": 1269,
+            "cacheWrite": 0,
+            "totalTokens": 1470
+          },
+          "model_calls": 3,
+          "trace_ref": "pagination-v1-8147-0001-all-last-gated",
+          "decisions": [
+            {
+              "decision_id": "5be35a3e2da347d38c67a93afe167711",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "not_first_page",
+              "policy_version": "eval-gated-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [],
+              "goal": "all",
+              "has_next": "unknown"
+            },
+            {
+              "decision_id": "80c3ff7eadea4c39b8b3468f86006165",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "last_page",
+              "policy_version": "eval-gated-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [],
+              "goal": "all",
+              "has_next": false
+            },
+            {
+              "decision_id": "1531dad44c9349f1baa0a589b8c5630c",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "not_first_page",
+              "policy_version": "eval-gated-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [],
+              "goal": "all",
+              "has_next": "unknown"
+            }
+          ],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-8147-0001-all-last",
+          "arm": "fixed",
+          "final_ids": [
+            "rec-0967c6da268c4e8428ea",
+            "rec-46f029d2f0d6fdd16174"
+          ],
+          "tool_pages": [
+            1,
+            1
+          ],
+          "answer_diagnostics": {
+            "format": "strict_json",
+            "mention_counts": {
+              "rec-0967c6da268c4e8428ea": 1,
+              "rec-46f029d2f0d6fdd16174": 1
+            }
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 1688,
+          "usage": {
+            "input": 333,
+            "output": 119,
+            "cacheRead": 1236,
+            "cacheWrite": 0,
+            "totalTokens": 1688
+          },
+          "model_calls": 3,
+          "trace_ref": "pagination-v1-8147-0001-all-last-fixed",
+          "decisions": [
+            {
+              "decision_id": "b62329f68f0a4b4c86bfd865b989c70f",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "not_first_page",
+              "policy_version": "eval-fixed-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [],
+              "goal": "all",
+              "has_next": "unknown"
+            },
+            {
+              "decision_id": "bd5d1b50209049888096dd3258a22431",
+              "assignment": "inject",
+              "exposure_status": "observed",
+              "reason": "fixed_first_page",
+              "policy_version": "eval-fixed-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [
+                "context",
+                "request_payload"
+              ],
+              "goal": "all",
+              "has_next": false
+            },
+            {
+              "decision_id": "98c02fe5285c4a39ab29eec9040b6824",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "fixed_already_assigned",
+              "policy_version": "eval-fixed-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [],
+              "goal": "all",
+              "has_next": false
+            }
+          ],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-8147-0000-all-last",
+          "arm": "native",
+          "final_ids": [
+            "rec-cfc8e6b761db7abb83a3",
+            "rec-1ac5decdcbf0d967f508"
+          ],
+          "tool_pages": [
+            1,
+            2
+          ],
+          "answer_diagnostics": {
+            "format": "strict_json",
+            "mention_counts": {
+              "rec-cfc8e6b761db7abb83a3": 1,
+              "rec-1ac5decdcbf0d967f508": 1
+            }
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 1452,
+          "usage": {
+            "input": 94,
+            "output": 95,
+            "cacheRead": 1263,
+            "cacheWrite": 0,
+            "totalTokens": 1452
+          },
+          "model_calls": 3,
+          "trace_ref": null,
+          "decisions": [],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-8147-0000-all-last",
+          "arm": "fixed",
+          "final_ids": [
+            "rec-cfc8e6b761db7abb83a3",
+            "rec-1ac5decdcbf0d967f508"
+          ],
+          "tool_pages": [
+            1,
+            1
+          ],
+          "answer_diagnostics": {
+            "format": "strict_json",
+            "mention_counts": {
+              "rec-cfc8e6b761db7abb83a3": 1,
+              "rec-1ac5decdcbf0d967f508": 1
+            }
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 1674,
+          "usage": {
+            "input": 325,
+            "output": 119,
+            "cacheRead": 1230,
+            "cacheWrite": 0,
+            "totalTokens": 1674
+          },
+          "model_calls": 3,
+          "trace_ref": "pagination-v1-8147-0000-all-last-fixed",
+          "decisions": [
+            {
+              "decision_id": "22c5ee27ae984db6ba176f3aad84e178",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "not_first_page",
+              "policy_version": "eval-fixed-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [],
+              "goal": "all",
+              "has_next": "unknown"
+            },
+            {
+              "decision_id": "cf04caf179e54151870403233224f9fc",
+              "assignment": "inject",
+              "exposure_status": "observed",
+              "reason": "fixed_first_page",
+              "policy_version": "eval-fixed-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [
+                "context",
+                "request_payload"
+              ],
+              "goal": "all",
+              "has_next": false
+            },
+            {
+              "decision_id": "ff28378bec564466a9b702bf39994f37",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "fixed_already_assigned",
+              "policy_version": "eval-fixed-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [],
+              "goal": "all",
+              "has_next": false
+            }
+          ],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-8147-0000-all-last",
+          "arm": "gated",
+          "final_ids": [
+            "rec-cfc8e6b761db7abb83a3",
+            "rec-1ac5decdcbf0d967f508"
+          ],
+          "tool_pages": [
+            1,
+            2
+          ],
+          "answer_diagnostics": {
+            "format": "strict_json",
+            "mention_counts": {
+              "rec-cfc8e6b761db7abb83a3": 1,
+              "rec-1ac5decdcbf0d967f508": 1
+            }
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 1452,
+          "usage": {
+            "input": 94,
+            "output": 95,
+            "cacheRead": 1263,
+            "cacheWrite": 0,
+            "totalTokens": 1452
+          },
+          "model_calls": 3,
+          "trace_ref": "pagination-v1-8147-0000-all-last-gated",
+          "decisions": [
+            {
+              "decision_id": "533cd2e1d3914a9e9ee9c62236c02ce1",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "not_first_page",
+              "policy_version": "eval-gated-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [],
+              "goal": "all",
+              "has_next": "unknown"
+            },
+            {
+              "decision_id": "b6ceab19b3014d96b750d1c1f404d4bc",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "last_page",
+              "policy_version": "eval-gated-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [],
+              "goal": "all",
+              "has_next": false
+            },
+            {
+              "decision_id": "1ab06c6c342c430ba78ff7d89b399ba8",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "not_first_page",
+              "policy_version": "eval-gated-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [],
+              "goal": "all",
+              "has_next": "unknown"
+            }
+          ],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-8147-0002-first-more",
+          "arm": "fixed",
+          "final_ids": [
+            "rec-909788de79498e06a115",
+            "rec-4ba1bc2a5a877cdb3242"
+          ],
+          "tool_pages": [
+            1,
+            2
+          ],
+          "answer_diagnostics": {
+            "format": "strict_json",
+            "mention_counts": {
+              "rec-909788de79498e06a115": 1,
+              "rec-4ba1bc2a5a877cdb3242": 1
+            }
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 1632,
+          "usage": {
+            "input": 346,
+            "output": 99,
+            "cacheRead": 1187,
+            "cacheWrite": 0,
+            "totalTokens": 1632
+          },
+          "model_calls": 3,
+          "trace_ref": "pagination-v1-8147-0002-first-more-fixed",
+          "decisions": [
+            {
+              "decision_id": "526c6c09e157434baf04fb64fc083c07",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "not_first_page",
+              "policy_version": "eval-fixed-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [],
+              "goal": "first",
+              "has_next": "unknown"
+            },
+            {
+              "decision_id": "a4402d0466504bf886723cbc38eeea25",
+              "assignment": "inject",
+              "exposure_status": "observed",
+              "reason": "fixed_first_page",
+              "policy_version": "eval-fixed-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [
+                "context",
+                "request_payload"
+              ],
+              "goal": "first",
+              "has_next": true
+            },
+            {
+              "decision_id": "ebd27e76fae24d4a9bf41506b60dace2",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "not_first_page",
+              "policy_version": "eval-fixed-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [],
+              "goal": "first",
+              "has_next": false
+            }
+          ],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-8147-0002-first-more",
+          "arm": "gated",
+          "final_ids": [
+            "rec-909788de79498e06a115",
+            "rec-4ba1bc2a5a877cdb3242"
+          ],
+          "tool_pages": [
+            1,
+            1
+          ],
+          "answer_diagnostics": {
+            "format": "strict_json",
+            "mention_counts": {
+              "rec-909788de79498e06a115": 1,
+              "rec-4ba1bc2a5a877cdb3242": 1
+            }
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 1524,
+          "usage": {
+            "input": 146,
+            "output": 99,
+            "cacheRead": 1279,
+            "cacheWrite": 0,
+            "totalTokens": 1524
+          },
+          "model_calls": 3,
+          "trace_ref": "pagination-v1-8147-0002-first-more-gated",
+          "decisions": [
+            {
+              "decision_id": "b5d67a111ab04cf2a6b62e4d38736afe",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "not_first_page",
+              "policy_version": "eval-gated-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [],
+              "goal": "first",
+              "has_next": "unknown"
+            },
+            {
+              "decision_id": "d9ba8800e8e643d8b97d96a60ca490dd",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "first_page_only",
+              "policy_version": "eval-gated-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [],
+              "goal": "first",
+              "has_next": true
+            },
+            {
+              "decision_id": "50486abd904e42cbb0c8f64dc6232fbb",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "opportunity_used",
+              "policy_version": "eval-gated-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [],
+              "goal": "first",
+              "has_next": true
+            }
+          ],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-8147-0002-first-more",
+          "arm": "native",
+          "final_ids": [
+            "rec-909788de79498e06a115",
+            "rec-4ba1bc2a5a877cdb3242"
+          ],
+          "tool_pages": [
+            1,
+            1
+          ],
+          "answer_diagnostics": {
+            "format": "strict_json",
+            "mention_counts": {
+              "rec-909788de79498e06a115": 1,
+              "rec-4ba1bc2a5a877cdb3242": 1
+            }
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 1524,
+          "usage": {
+            "input": 146,
+            "output": 99,
+            "cacheRead": 1279,
+            "cacheWrite": 0,
+            "totalTokens": 1524
+          },
+          "model_calls": 3,
+          "trace_ref": null,
+          "decisions": [],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-8147-0002-all-last",
+          "arm": "native",
+          "final_ids": [
+            "rec-909788de79498e06a115",
+            "rec-4ba1bc2a5a877cdb3242"
+          ],
+          "tool_pages": [
+            1,
+            2
+          ],
+          "answer_diagnostics": {
+            "format": "strict_json",
+            "mention_counts": {
+              "rec-909788de79498e06a115": 1,
+              "rec-4ba1bc2a5a877cdb3242": 1
+            }
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 1464,
+          "usage": {
+            "input": 153,
+            "output": 99,
+            "cacheRead": 1212,
+            "cacheWrite": 0,
+            "totalTokens": 1464
+          },
+          "model_calls": 3,
+          "trace_ref": null,
+          "decisions": [],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-8147-0002-all-last",
+          "arm": "gated",
+          "final_ids": [
+            "rec-909788de79498e06a115",
+            "rec-4ba1bc2a5a877cdb3242"
+          ],
+          "tool_pages": [
+            1,
+            2
+          ],
+          "answer_diagnostics": {
+            "format": "strict_json",
+            "mention_counts": {
+              "rec-909788de79498e06a115": 1,
+              "rec-4ba1bc2a5a877cdb3242": 1
+            }
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 1464,
+          "usage": {
+            "input": 98,
+            "output": 99,
+            "cacheRead": 1267,
+            "cacheWrite": 0,
+            "totalTokens": 1464
+          },
+          "model_calls": 3,
+          "trace_ref": "pagination-v1-8147-0002-all-last-gated",
+          "decisions": [
+            {
+              "decision_id": "784932bc07be4dad8af2adfcfab4cac9",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "not_first_page",
+              "policy_version": "eval-gated-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [],
+              "goal": "all",
+              "has_next": "unknown"
+            },
+            {
+              "decision_id": "5364ea26cf554779b26c9b9533945fdc",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "last_page",
+              "policy_version": "eval-gated-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [],
+              "goal": "all",
+              "has_next": false
+            },
+            {
+              "decision_id": "f0811dfe2dbf4e5cac0842ff93e8c10b",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "not_first_page",
+              "policy_version": "eval-gated-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [],
+              "goal": "all",
+              "has_next": "unknown"
+            }
+          ],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-8147-0002-all-last",
+          "arm": "fixed",
+          "final_ids": [
+            "rec-909788de79498e06a115",
+            "rec-4ba1bc2a5a877cdb3242"
+          ],
+          "tool_pages": [
+            1,
+            1
+          ],
+          "answer_diagnostics": {
+            "format": "strict_json",
+            "mention_counts": {
+              "rec-909788de79498e06a115": 1,
+              "rec-4ba1bc2a5a877cdb3242": 1
+            }
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 1681,
+          "usage": {
+            "input": 330,
+            "output": 117,
+            "cacheRead": 1234,
+            "cacheWrite": 0,
+            "totalTokens": 1681
+          },
+          "model_calls": 3,
+          "trace_ref": "pagination-v1-8147-0002-all-last-fixed",
+          "decisions": [
+            {
+              "decision_id": "b84f767abe7f482a8b4e922d80956947",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "not_first_page",
+              "policy_version": "eval-fixed-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [],
+              "goal": "all",
+              "has_next": "unknown"
+            },
+            {
+              "decision_id": "9c83214b95a94e339264db232ff8e4c1",
+              "assignment": "inject",
+              "exposure_status": "observed",
+              "reason": "fixed_first_page",
+              "policy_version": "eval-fixed-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [
+                "context",
+                "request_payload"
+              ],
+              "goal": "all",
+              "has_next": false
+            },
+            {
+              "decision_id": "b4d29a3c87804b1a9e0b5ff87b0452a7",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "fixed_already_assigned",
+              "policy_version": "eval-fixed-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [],
+              "goal": "all",
+              "has_next": false
+            }
+          ],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-8147-0000-all-more",
+          "arm": "gated",
+          "final_ids": [
+            "rec-cfc8e6b761db7abb83a3",
+            "rec-1ac5decdcbf0d967f508",
+            "rec-0278be5eadaf175c1a5b",
+            "rec-dba6488cd8f2c35c02ce"
+          ],
+          "tool_pages": [
+            1,
+            2,
+            3
+          ],
+          "answer_diagnostics": {
+            "format": "strict_json",
+            "mention_counts": {
+              "rec-cfc8e6b761db7abb83a3": 1,
+              "rec-1ac5decdcbf0d967f508": 1,
+              "rec-0278be5eadaf175c1a5b": 1,
+              "rec-dba6488cd8f2c35c02ce": 1
+            }
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 2303,
+          "usage": {
+            "input": 326,
+            "output": 160,
+            "cacheRead": 1817,
+            "cacheWrite": 0,
+            "totalTokens": 2303
+          },
+          "model_calls": 4,
+          "trace_ref": "pagination-v1-8147-0000-all-more-gated",
+          "decisions": [
+            {
+              "decision_id": "e21ea94dd4dc4b09bea98bcb4ed1d36b",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "not_first_page",
+              "policy_version": "eval-gated-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [],
+              "goal": "all",
+              "has_next": "unknown"
+            },
+            {
+              "decision_id": "c880fee21c994d0393dca154858027b8",
+              "assignment": "inject",
+              "exposure_status": "observed",
+              "reason": "continue_pagination",
+              "policy_version": "eval-gated-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [
+                "context",
+                "request_payload"
+              ],
+              "goal": "all",
+              "has_next": true
+            },
+            {
+              "decision_id": "97c46632ce9641e091bcd08ef088b0e3",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "not_first_page",
+              "policy_version": "eval-gated-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [],
+              "goal": "all",
+              "has_next": false
+            },
+            {
+              "decision_id": "7cd1f2ce34964aae98d157865a06715a",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "not_first_page",
+              "policy_version": "eval-gated-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [],
+              "goal": "all",
+              "has_next": "unknown"
+            }
+          ],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-8147-0000-all-more",
+          "arm": "fixed",
+          "final_ids": [
+            "rec-cfc8e6b761db7abb83a3",
+            "rec-1ac5decdcbf0d967f508",
+            "rec-0278be5eadaf175c1a5b",
+            "rec-dba6488cd8f2c35c02ce"
+          ],
+          "tool_pages": [
+            1,
+            2,
+            3
+          ],
+          "answer_diagnostics": {
+            "format": "strict_json",
+            "mention_counts": {
+              "rec-cfc8e6b761db7abb83a3": 1,
+              "rec-1ac5decdcbf0d967f508": 1,
+              "rec-0278be5eadaf175c1a5b": 1,
+              "rec-dba6488cd8f2c35c02ce": 1
+            }
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 2304,
+          "usage": {
+            "input": 327,
+            "output": 160,
+            "cacheRead": 1817,
+            "cacheWrite": 0,
+            "totalTokens": 2304
+          },
+          "model_calls": 4,
+          "trace_ref": "pagination-v1-8147-0000-all-more-fixed",
+          "decisions": [
+            {
+              "decision_id": "2149d60fb96745389215bcfe77774ea3",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "not_first_page",
+              "policy_version": "eval-fixed-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [],
+              "goal": "all",
+              "has_next": "unknown"
+            },
+            {
+              "decision_id": "12e6482d3e054dd7bc315155029361ec",
+              "assignment": "inject",
+              "exposure_status": "observed",
+              "reason": "fixed_first_page",
+              "policy_version": "eval-fixed-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [
+                "context",
+                "request_payload"
+              ],
+              "goal": "all",
+              "has_next": true
+            },
+            {
+              "decision_id": "d315df2bd76a4092b1e671763b00a214",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "not_first_page",
+              "policy_version": "eval-fixed-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [],
+              "goal": "all",
+              "has_next": false
+            },
+            {
+              "decision_id": "848ec03218fc438fb2280ea6bc26960b",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "not_first_page",
+              "policy_version": "eval-fixed-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [],
+              "goal": "all",
+              "has_next": "unknown"
+            }
+          ],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-8147-0000-all-more",
+          "arm": "native",
+          "final_ids": [
+            "rec-cfc8e6b761db7abb83a3",
+            "rec-1ac5decdcbf0d967f508",
+            "rec-0278be5eadaf175c1a5b",
+            "rec-dba6488cd8f2c35c02ce"
+          ],
+          "tool_pages": [
+            1,
+            2,
+            3
+          ],
+          "answer_diagnostics": {
+            "format": "strict_json",
+            "mention_counts": {
+              "rec-cfc8e6b761db7abb83a3": 1,
+              "rec-1ac5decdcbf0d967f508": 1,
+              "rec-0278be5eadaf175c1a5b": 1,
+              "rec-dba6488cd8f2c35c02ce": 1
+            }
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 2172,
+          "usage": {
+            "input": 162,
+            "output": 160,
+            "cacheRead": 1850,
+            "cacheWrite": 0,
+            "totalTokens": 2172
+          },
+          "model_calls": 4,
+          "trace_ref": null,
+          "decisions": [],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-8147-0001-first-more",
+          "arm": "native",
+          "final_ids": [
+            "rec-0967c6da268c4e8428ea",
+            "rec-46f029d2f0d6fdd16174"
+          ],
+          "tool_pages": [
+            1,
+            1
+          ],
+          "answer_diagnostics": {
+            "format": "strict_json",
+            "mention_counts": {
+              "rec-0967c6da268c4e8428ea": 1,
+              "rec-46f029d2f0d6fdd16174": 1
+            }
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 1532,
+          "usage": {
+            "input": 209,
+            "output": 101,
+            "cacheRead": 1222,
+            "cacheWrite": 0,
+            "totalTokens": 1532
+          },
+          "model_calls": 3,
+          "trace_ref": null,
+          "decisions": [],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-8147-0001-first-more",
+          "arm": "gated",
+          "final_ids": [
+            "rec-0967c6da268c4e8428ea",
+            "rec-46f029d2f0d6fdd16174"
+          ],
+          "tool_pages": [
+            1,
+            1
+          ],
+          "answer_diagnostics": {
+            "format": "strict_json",
+            "mention_counts": {
+              "rec-0967c6da268c4e8428ea": 1,
+              "rec-46f029d2f0d6fdd16174": 1
+            }
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 1532,
+          "usage": {
+            "input": 150,
+            "output": 101,
+            "cacheRead": 1281,
+            "cacheWrite": 0,
+            "totalTokens": 1532
+          },
+          "model_calls": 3,
+          "trace_ref": "pagination-v1-8147-0001-first-more-gated",
+          "decisions": [
+            {
+              "decision_id": "c79b82e366654a26a6710c1100c9f58e",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "not_first_page",
+              "policy_version": "eval-gated-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [],
+              "goal": "first",
+              "has_next": "unknown"
+            },
+            {
+              "decision_id": "9f8cd5baa803463e870927f35836d989",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "first_page_only",
+              "policy_version": "eval-gated-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [],
+              "goal": "first",
+              "has_next": true
+            },
+            {
+              "decision_id": "5461240d0a774930848ee9ca5893687a",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "opportunity_used",
+              "policy_version": "eval-gated-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [],
+              "goal": "first",
+              "has_next": true
+            }
+          ],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-8147-0001-first-more",
+          "arm": "fixed",
+          "final_ids": [
+            "rec-0967c6da268c4e8428ea",
+            "rec-46f029d2f0d6fdd16174"
+          ],
+          "tool_pages": [
+            1,
+            2
+          ],
+          "answer_diagnostics": {
+            "format": "strict_json",
+            "mention_counts": {
+              "rec-0967c6da268c4e8428ea": 1,
+              "rec-46f029d2f0d6fdd16174": 1
+            }
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 1667,
+          "usage": {
+            "input": 318,
+            "output": 101,
+            "cacheRead": 1248,
+            "cacheWrite": 0,
+            "totalTokens": 1667
+          },
+          "model_calls": 3,
+          "trace_ref": "pagination-v1-8147-0001-first-more-fixed",
+          "decisions": [
+            {
+              "decision_id": "ea20a75ede7a4eeb96e78478faf49b58",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "not_first_page",
+              "policy_version": "eval-fixed-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [],
+              "goal": "first",
+              "has_next": "unknown"
+            },
+            {
+              "decision_id": "2adff7d44f794297bb094f5621b86888",
+              "assignment": "inject",
+              "exposure_status": "observed",
+              "reason": "fixed_first_page",
+              "policy_version": "eval-fixed-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [
+                "context",
+                "request_payload"
+              ],
+              "goal": "first",
+              "has_next": true
+            },
+            {
+              "decision_id": "b3184c842d1549448e397fd4b8122dd1",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "not_first_page",
+              "policy_version": "eval-fixed-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [],
+              "goal": "first",
+              "has_next": false
+            }
+          ],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-8147-0000-first-more",
+          "arm": "gated",
+          "final_ids": [
+            "rec-cfc8e6b761db7abb83a3",
+            "rec-1ac5decdcbf0d967f508"
+          ],
+          "tool_pages": [
+            1,
+            1
+          ],
+          "answer_diagnostics": {
+            "format": "strict_json",
+            "mention_counts": {
+              "rec-cfc8e6b761db7abb83a3": 1,
+              "rec-1ac5decdcbf0d967f508": 1
+            }
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 1508,
+          "usage": {
+            "input": 138,
+            "output": 95,
+            "cacheRead": 1275,
+            "cacheWrite": 0,
+            "totalTokens": 1508
+          },
+          "model_calls": 3,
+          "trace_ref": "pagination-v1-8147-0000-first-more-gated",
+          "decisions": [
+            {
+              "decision_id": "fc45ca890bd34b7685bbbe6a63e93542",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "not_first_page",
+              "policy_version": "eval-gated-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [],
+              "goal": "first",
+              "has_next": "unknown"
+            },
+            {
+              "decision_id": "86db9b028ace4bfcae27fa9b0497e9cd",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "first_page_only",
+              "policy_version": "eval-gated-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [],
+              "goal": "first",
+              "has_next": true
+            },
+            {
+              "decision_id": "d0d8d84b7f8d4c3bbc6b2d018540bac6",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "opportunity_used",
+              "policy_version": "eval-gated-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [],
+              "goal": "first",
+              "has_next": true
+            }
+          ],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-8147-0000-first-more",
+          "arm": "fixed",
+          "final_ids": [
+            "rec-cfc8e6b761db7abb83a3",
+            "rec-1ac5decdcbf0d967f508"
+          ],
+          "tool_pages": [
+            1,
+            2
+          ],
+          "answer_diagnostics": {
+            "format": "strict_json",
+            "mention_counts": {
+              "rec-cfc8e6b761db7abb83a3": 1,
+              "rec-1ac5decdcbf0d967f508": 1
+            }
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 1639,
+          "usage": {
+            "input": 302,
+            "output": 95,
+            "cacheRead": 1242,
+            "cacheWrite": 0,
+            "totalTokens": 1639
+          },
+          "model_calls": 3,
+          "trace_ref": "pagination-v1-8147-0000-first-more-fixed",
+          "decisions": [
+            {
+              "decision_id": "986a08209c954def9688e88ae03c2080",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "not_first_page",
+              "policy_version": "eval-fixed-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [],
+              "goal": "first",
+              "has_next": "unknown"
+            },
+            {
+              "decision_id": "f708a91b94804b39bb9fe9cda35ee54c",
+              "assignment": "inject",
+              "exposure_status": "observed",
+              "reason": "fixed_first_page",
+              "policy_version": "eval-fixed-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [
+                "context",
+                "request_payload"
+              ],
+              "goal": "first",
+              "has_next": true
+            },
+            {
+              "decision_id": "156ce1e132bd407dadde499731d10499",
+              "assignment": "skip",
+              "exposure_status": "not_applicable",
+              "reason": "not_first_page",
+              "policy_version": "eval-fixed-first-page-v1",
+              "skill_version": "paginate@5228894fcff7b11522e782db434f5e22b948916a1805b24bbd437ebaee4e4a3b",
+              "receipt_locations": [],
+              "goal": "first",
+              "has_next": false
+            }
+          ],
+          "error": null
+        },
+        {
+          "task_id": "pagination-v1-8147-0000-first-more",
+          "arm": "native",
+          "final_ids": [
+            "rec-cfc8e6b761db7abb83a3",
+            "rec-1ac5decdcbf0d967f508"
+          ],
+          "tool_pages": [
+            1,
+            1
+          ],
+          "answer_diagnostics": {
+            "format": "strict_json",
+            "mention_counts": {
+              "rec-cfc8e6b761db7abb83a3": 1,
+              "rec-1ac5decdcbf0d967f508": 1
+            }
+          },
+          "budget_exhausted": false,
+          "termination_reason": "completed",
+          "total_tokens": 1508,
+          "usage": {
+            "input": 138,
+            "output": 95,
+            "cacheRead": 1275,
+            "cacheWrite": 0,
+            "totalTokens": 1508
+          },
+          "model_calls": 3,
+          "trace_ref": null,
+          "decisions": [],
+          "error": null
+        }
+      ]
+    }
+  ]
+}
